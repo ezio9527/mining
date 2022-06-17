@@ -28,6 +28,8 @@
 <script>
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import IVYContract from '@/server/IVYContract'
+import CakeLPContract from '@/server/CakeLPContract'
 
 export default {
   name: 'HeaderComp',
@@ -48,8 +50,16 @@ export default {
       localStorage.setItem('language', language)
       this.locale = language
     },
-    // 链接IVY钱包
+    // 链接钱包
     connect () {
+      window.ethereum.enable().then((accounts) => {
+        this.$emit('update:connection', true)
+        const account = accounts[0]
+        const ivyContract = IVYContract.getInstanceof(account)
+        const lpContract = CakeLPContract.getInstanceof(account)
+        this.$store.commit('contract/setIVYContract', ivyContract)
+        this.$store.commit('contract/setCakeLPContract', lpContract)
+      })
     }
   },
   setup () {

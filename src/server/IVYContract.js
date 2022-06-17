@@ -1,6 +1,7 @@
 import { IVY_ABI, IVY_ABI_STAKE } from '@/server/IVY_ABI'
 import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
+import { Toast } from 'vant'
 
 class IVYContract {
   static instanceofObj = null
@@ -93,15 +94,19 @@ class IVYContract {
    * @param address
    */
   pledge ({ address = IVYContract.walletAddress, amount, lock = 0, use = false }) {
-    console.log('质押数量', Web3.utils.toWei(amount + ''))
+    console.log('质押数量', Web3.utils.toWei(amount.toString()))
     const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_STAKE)
-    console.log('方法签名', funcSign)
-    amount = Web3.utils.toHex(amount).substring(2)
+    amount = Web3.utils.toHex(Web3.utils.toWei(amount.toString())).substring(2)
     amount = Web3.utils.padLeft(amount, 64)
-    const data = funcSign + amount
-    this.sendEtherFrom({ data }).then(() => {
-      console.log('质押成功')
-    }).catch(() => {
+    lock = Web3.utils.toHex(Web3.utils.toWei(lock.toString())).substring(2)
+    lock = Web3.utils.padLeft(lock, 64)
+    use = Web3.utils.toHex(Web3.utils.toWei('0')).substring(2)
+    use = Web3.utils.padLeft(use, 64)
+    const data = funcSign + amount + lock + use
+    this.sendEtherFrom({ data }).then(res => {
+      console.log('质押成功', res)
+    }).catch(e => {
+      Toast.fail(e.message)
       console.log('质押失败')
     })
   }
@@ -176,70 +181,85 @@ class IVYContract {
   }
 
   /**
+   * 计算旷工费
+   * @param {Object} address 用户地址
+   * @param {Object} data 数据
+   * @param {Object} value 转账金额
+   */
+  getGas ({ data, value = '0x0', from = IVYContract.walletAddress, to = IVYContract.CONTRACT_ADDRESS }) {
+    return new Promise((resolve, reject) => {
+      // 计算旷工费
+      IVYContract.web3.eth.estimateGas({
+        from,
+        to,
+        value,
+        data: data
+      }).then(gaslimit => {
+        IVYContract.web3.eth.getGasPrice().then(gasPrice => {
+          resolve({ gaslimit, gasPrice })
+        }).catch(e => {
+          resolve({ gaslimit })
+        })
+      }).catch(error => {
+        resolve({})
+        console.log('矿工费计算失败', error)
+      })
+    })
+  }
+
+  /**
    * 发送交易
    * @param {Object} address 用户地址
    * @param {Object} data 数据
    * @param {Object} value 转账金额
    */
   sendEtherFrom ({ data, value = '0x0', from = IVYContract.walletAddress, to = IVYContract.CONTRACT_ADDRESS }) {
-    // 计算旷工费
-    IVYContract.web3.eth.estimateGas({
-      from,
-      to,
-      value,
-      data: data
-    }).then(gas => {
-      console.log('矿工费', gas)
-    }).catch(error => {
-      console.log('矿工费计算失败', error)
-    })
     return new Promise((resolve, reject) => {
-      const parameters = [{
-        from,
-        to,
-        value,
-        data: data
-        // gasPrice: gasPrice,
-        // gasLimit: gaslimit
-      }]
-      const payload = {
-        method: 'eth_sendTransaction',
-        params: parameters,
-        from
-      }
-      window.ethereum.sendAsync(payload, (error, response) => {
-        console.log(error)
-        const rejected = 'User denied transaction signature.'
-        if (response.error && response.error.message.includes(rejected)) {
-          resolve('refuse')
+      this.getGas({ data, value, from, to }).then(res => {
+        const parameters = [{
+          from,
+          to,
+          value,
+          data: data,
+          gasPrice: res.gasPrice,
+          gasLimit: res.gaslimit
+        }]
+        const payload = {
+          method: 'eth_sendTransaction',
+          params: parameters,
+          from
         }
-        if (response.code === '-32603') {
-          reject(new Error('fail'))
-        }
-        if (response.error && response.error.code === '-32603') {
-          reject(new Error('fail'))
-        }
-        if (response.result) {
-          // timer_takeGain = setInterval(() => {
-          //   number_takeGain++
-          //   // 查询交易是否完成，这⾥要通过这个⽅法去⼀直查询交易是否完成
-          //   web3.eth.getTransactionReceipt(response.result).then(function (res) {
-          //     if (res == null) {
-          //       callback(res)
-          //     } else if (res.status) {
-          //       callback(res.status)
-          //       clearInterval(timer_takeGain)
-          //     } else {
-          //       clearInterval(timer_takeGain)
-          //     }
-          //   })
-          //   if (number_takeGain > 10) {
-          //     clearInterval(timer_takeGain)
-          //     callback('timeout')
-          //     number_takeGain = 1
-          //   }
-          // }, 2000)
-        }
+        window.ethereum.sendAsync(payload, (error, response) => {
+          const rejected = 'User denied transaction signature.'
+          if (response.error && response.error.message.includes(rejected)) {
+            resolve('refuse')
+          }
+          if (error) {
+            reject(error)
+          }
+          if (response.result) {
+            // timer_takeGain = setInterval(() => {
+            //   number_takeGain++
+            //   // 查询交易是否完成，这⾥要通过这个⽅法去⼀直查询交易是否完成
+            //   web3.eth.getTransactionReceipt(response.result).then(function (res) {
+            //     if (res == null) {
+            //       callback(res)
+            //     } else if (res.status) {
+            //       callback(res.status)
+            //       clearInterval(timer_takeGain)
+            //     } else {
+            //       clearInterval(timer_takeGain)
+            //     }
+            //   })
+            //   if (number_takeGain > 10) {
+            //     clearInterval(timer_takeGain)
+            //     callback('timeout')
+            //     number_takeGain = 1
+            //   }
+            // }, 2000)
+          }
+        })
+        // getGas调用结束
       })
     })
   }

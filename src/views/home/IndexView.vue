@@ -1,6 +1,6 @@
 <template>
   <div class="home-view">
-    <HeaderComp :connection="connection"></HeaderComp>
+    <HeaderComp v-model:connection="connection"></HeaderComp>
     <MiningComp></MiningComp>
     <DescriptionComp></DescriptionComp>
   </div>
