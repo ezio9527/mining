@@ -24,7 +24,7 @@ module.exports = {
     pledgeTotal: '总%{symbol}质押量',
     pledgeMineTotal: '个人%{symbol}质押量',
     miningTotal: '挖矿总量',
-    miningMineTotal: '个人挖矿总量',
+    miningMineTotal: '当前个人挖矿',
     project: '项目介绍',
     audit: '审计机构',
     partner: '合作伙伴',

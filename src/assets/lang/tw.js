@@ -24,7 +24,7 @@ module.exports = {
     pledgeTotal: '總%{symbol}質押量',
     pledgeMineTotal: '個人%{symbol}質押量',
     miningTotal: '挖礦總量',
-    miningMineTotal: '個人挖礦總量',
+    miningMineTotal: '當前個人挖礦',
     project: '項目介紹',
     audit: '審計機構',
     partner: '合作夥伴',

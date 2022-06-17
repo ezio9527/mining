@@ -30,11 +30,13 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IVYContract from '@/server/IVYContract'
 import ClipboardJS from 'clipboard'
+import tp from 'tp-js-sdk'
 
 export default {
   name: 'HeaderComp',
   data () {
     return {
+      isTpApp: false,
       connection: false,
       CONTRACT_ADDRESS: IVYContract.TOKEN_ADDRESS,
       TOTAL: 10000 // 发行总量
@@ -48,28 +50,34 @@ export default {
     },
     // 链接钱包
     connect () {
-      window.ethereum.request({
-        method: 'wallet_addEthereumChain', // Metamask的api名称
-        params: [{
-          chainId: '0x38', // 网络id，16进制的字符串
-          chainName: 'BNB Chain', // 添加到钱包后显示的网络名称
-          rpcUrls: [
-            'https://bsc-dataseed.binance.org/' // rpc地址
-          ],
-          // iconUrls: [
-          //   'https://testnet.hecoinfo.com/favicon.png' // 网络的图标，暂时没看到在哪里会显示
-          // ],
-          blockExplorerUrls: [
-            'https://bscscan.com/' // 网络对应的区块浏览器
-          ],
-          nativeCurrency: {
-            // 网络主币的信息
-            name: 'BNB',
-            symbol: 'BNB',
-            decimals: 18
-          }
-        }]
-      })
+      if (this.isTpApp) {
+        tp.getWallet({
+          walletTypes: ['bsc'], switch: true
+        })
+      } else {
+        window.ethereum.request({
+          method: 'wallet_addEthereumChain', // Metamask的api名称
+          params: [{
+            chainId: '0x38', // 网络id，16进制的字符串
+            chainName: 'BNB Chain', // 添加到钱包后显示的网络名称
+            rpcUrls: [
+              'https://bsc-dataseed.binance.org/' // rpc地址
+            ],
+            // iconUrls: [
+            //   'https://testnet.hecoinfo.com/favicon.png' // 网络的图标，暂时没看到在哪里会显示
+            // ],
+            blockExplorerUrls: [
+              'https://bscscan.com/' // 网络对应的区块浏览器
+            ],
+            nativeCurrency: {
+              // 网络主币的信息
+              name: 'BNB',
+              symbol: 'BNB',
+              decimals: 18
+            }
+          }]
+        })
+      }
     },
     // 获取授权
     enable () {
@@ -88,6 +96,9 @@ export default {
     }
   },
   mounted () {
+    tp.getAppInfo().then(info => {
+      console.log(info)
+    })
     window.ethereum.autoRefreshOnNetworkChange = false
     window.ethereum.on('networkChanged', chainId => {
       this.enable()
