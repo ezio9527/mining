@@ -823,4 +823,30 @@ const IVY_ABI = [
   }
 ]
 
-export default IVY_ABI
+const IVY_ABI_STAKE = {
+  inputs: [
+    {
+      internalType: 'uint256',
+      name: '_amount',
+      type: 'uint256'
+    },
+    {
+      internalType: 'uint64',
+      name: '_lockUntil',
+      type: 'uint64'
+    },
+    {
+      internalType: 'bool',
+      name: '_useSIVY',
+      type: 'bool'
+    }
+  ],
+  name: 'stake',
+  outputs: [],
+  stateMutability: 'nonpayable',
+  type: 'function'
+}
+export {
+  IVY_ABI,
+  IVY_ABI_STAKE
+}

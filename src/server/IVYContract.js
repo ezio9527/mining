@@ -1,4 +1,4 @@
-import IVY_ABI from '@/server/IVY_ABI'
+import { IVY_ABI, IVY_ABI_STAKE } from '@/server/IVY_ABI'
 import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
 
@@ -21,7 +21,7 @@ class IVYContract {
   static CONTRACT_ADDRESS = '0x00CE333b9E5d4F5d09f63D0d109ff752CCF511e2'
 
   static PROVIDER_LIST = [
-    'https://dataseed1.binance.org/'
+    'https://bsc-dataseed.binance.org/'
   ]
 
   static TEST_PROVIDER_LIST = [
@@ -92,34 +92,14 @@ class IVYContract {
    * 质押
    * @param address
    */
-  pledge ({ address = IVYContract.walletAddress, amount, lock, use }) {
-    console.log('质押', Web3.utils.toWei(amount + ''))
-    const abi = IVYContract.web3.eth.abi.encodeFunctionCall(
-      {
-        inputs: [
-          {
-            internalType: 'uint256',
-            name: '_amount',
-            type: 'uint256'
-          },
-          {
-            internalType: 'uint64',
-            name: '_lockUntil',
-            type: 'uint64'
-          },
-          {
-            internalType: 'bool',
-            name: '_useSIVY',
-            type: 'bool'
-          }
-        ],
-        name: 'stake',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function'
-      // }, ['10000000000000000', 0, false])
-      }, [(Web3.utils.toWei(amount) + ''), 0, false])
-    this.sendEtherFrom(abi, (Web3.utils.toWei(amount) + '')).then(() => {
+  pledge ({ address = IVYContract.walletAddress, amount, lock = 0, use = false }) {
+    console.log('质押数量', Web3.utils.toWei(amount + ''))
+    const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_STAKE)
+    console.log('方法签名', funcSign)
+    amount = Web3.utils.toHex(amount).substring(2)
+    amount = Web3.utils.padLeft(amount, 64)
+    const data = funcSign + amount
+    this.sendEtherFrom({ data }).then(() => {
       console.log('质押成功')
     }).catch(() => {
       console.log('质押失败')
@@ -201,13 +181,13 @@ class IVYContract {
    * @param {Object} data 数据
    * @param {Object} value 转账金额
    */
-  sendEtherFrom (data, value, address = IVYContract.walletAddress) {
+  sendEtherFrom ({ data, value = '0x0', from = IVYContract.walletAddress, to = IVYContract.CONTRACT_ADDRESS }) {
     // 计算旷工费
     IVYContract.web3.eth.estimateGas({
-      from: address,
-      to: IVYContract.CONTRACT_ADDRESS,
-      data: data,
-      value: value
+      from,
+      to,
+      value,
+      data: data
     }).then(gas => {
       console.log('矿工费', gas)
     }).catch(error => {
@@ -215,17 +195,17 @@ class IVYContract {
     })
     return new Promise((resolve, reject) => {
       const parameters = [{
-        from: address,
-        to: IVYContract.CONTRACT_ADDRESS,
-        data: data,
-        value: value
+        from,
+        to,
+        value,
+        data: data
         // gasPrice: gasPrice,
         // gasLimit: gaslimit
       }]
       const payload = {
         method: 'eth_sendTransaction',
         params: parameters,
-        from: address
+        from
       }
       window.ethereum.sendAsync(payload, (error, response) => {
         console.log(error)

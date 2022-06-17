@@ -1,6 +1,6 @@
 <template>
   <div class="home-view">
-    <HeaderComp></HeaderComp>
+    <HeaderComp :connection="connection"></HeaderComp>
     <MiningComp></MiningComp>
     <DescriptionComp></DescriptionComp>
   </div>
@@ -10,7 +10,6 @@
 import HeaderComp from './HeaderComp'
 import MiningComp from './MiningComp'
 import DescriptionComp from './DescriptionComp'
-import tp from 'tp-js-sdk'
 import IVYContract from '@/server/IVYContract'
 import CakeLPContract from '@/server/CakeLPContract'
 
@@ -21,23 +20,19 @@ export default {
     MiningComp,
     DescriptionComp
   },
+  data () {
+    return {
+      connection: false
+    }
+  },
   mounted () {
-    window.ethereum.enable().then(() => {
-      tp.getCurrentWallet().then(res => {
-        if (res.result && res.data.blockchain_id === IVYContract.BLOCKCHAIN_ID) {
-          const ivyContract = IVYContract.getInstanceof(res.data.address)
-          const lpContract = CakeLPContract.getInstanceof(res.data.address)
-          this.$store.commit('contract/setIVYContract', ivyContract)
-          this.$store.commit('contract/setCakeLPContract', lpContract)
-        } else {
-          tp.getWallet({
-            walletTypes: [IVYContract.WALLET_TYPE],
-            switch: true
-          })
-        }
-      }).catch(e => {
-        console.log(e)
-      })
+    window.ethereum.enable().then((accounts) => {
+      this.connection = true
+      const account = accounts[0]
+      const ivyContract = IVYContract.getInstanceof(account)
+      const lpContract = CakeLPContract.getInstanceof(account)
+      this.$store.commit('contract/setIVYContract', ivyContract)
+      this.$store.commit('contract/setCakeLPContract', lpContract)
     })
   }
 }

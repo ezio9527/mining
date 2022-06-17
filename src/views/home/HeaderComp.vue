@@ -8,7 +8,8 @@
           <span>IVY</span>
         </div>
         <div>
-          <button @click="connect">{{ $t('home.connect') }}</button>
+          <button v-if="connection"><i class="header-comp-container_dot"></i>{{ $t('home.connected') }}</button>
+          <button v-else @click="connect">{{ $t('home.connect') }}</button>
           <van-dropdown-menu>
             <van-dropdown-item v-model="lang" :options="langList" @change="languageSelect"/>
           </van-dropdown-menu>
@@ -27,14 +28,18 @@
 <script>
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import tp from 'tp-js-sdk'
-import IVYContract from '@/server/IVYContract'
 
 export default {
   name: 'HeaderComp',
   data () {
     return {
       TOTAL: 10000 // 发行总量
+    }
+  },
+  props: {
+    connection: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -45,10 +50,6 @@ export default {
     },
     // 链接IVY钱包
     connect () {
-      tp.getWallet({
-        walletTypes: [IVYContract.WALLET_TYPE],
-        switch: true
-      })
     }
   },
   setup () {
@@ -109,6 +110,27 @@ export default {
         padding: 4px 8px;
         border-radius: 6px;
         margin-right: 6px;
+      }
+      .header-comp-container_dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: var(--primary-color);
+        border-radius: 100px;
+        margin-right: 8px;
+        box-shadow: 0 0 2px 2px rgba(2, 178, 31, 0.9);
+        animation: dot 1500ms linear infinite;
+      }
+      @keyframes dot {
+        0% {
+          box-shadow: 0 0 2px 2px rgba(2, 178, 31, 0.9);
+        }
+        50% {
+          box-shadow: 0 0 0px 0px rgba(2, 178, 31, 0.4);
+        }
+        100% {
+          box-shadow: 0 0 2px 2px rgba(2, 178, 31, 0.9);
+        }
       }
     }
     //发行总量

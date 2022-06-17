@@ -14,6 +14,7 @@ module.exports = {
   // 主页
   home: {
     connect: '链接钱包',
+    connected: '已链接',
     issue: '发行总量',
     contract: '%{symbol}合约',
     mining: '质押%{symbol}挖矿',
