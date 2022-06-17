@@ -38,7 +38,10 @@ export default {
   },
   computed: {
     ...mapGetters({
-      ivyContract: 'contract/getIVYContract'
+      miningAllTotal: 'contract/getMiningAllTotal',
+      miningVol: 'contract/getMiningVol',
+      pledgeVol: 'contract/getPledgeVol',
+      pledgeTotal: 'contract/getPledgeTotal'
     })
   },
   data () {
@@ -50,46 +53,7 @@ export default {
       SELECTED_PLEDGE: 'pledge',
       SELECTED_PICKUP: 'pickup',
       SELECTED_REDEEM: 'redeem',
-      selected: '',
-      miningAllTotal: 0, // 已挖矿量
-      miningVol: 0, // 个人挖矿量
-      pledgeVol: 0, // 个人质押量
-      pledgeTotal: 0 // 全部质押量
-    }
-  },
-  watch: {
-    ivyContract (val) {
-      if (val) {
-        this.ivyContract.getBalanceInfo().then(res => {
-          console.log('IVY余额:', res)
-        }).catch(e => {
-          console.log(e)
-        })
-        this.ivyContract.getMiningNumber().then(res => {
-          console.log('个人挖矿量:', res)
-          this.miningVol = res
-        }).catch(e => {
-          console.log(e)
-        })
-        this.ivyContract.getMiningTotal().then(res => {
-          console.log('已挖矿量:', res)
-          this.miningAllTotal = res
-        }).catch(e => {
-          console.log(e)
-        })
-        this.ivyContract.getPledgeTotal().then(res => {
-          console.log('个人质押量:', res)
-          this.pledgeVol = res
-        }).catch(e => {
-          console.log(e)
-        })
-        this.ivyContract.getPledgeAllTotal().then(res => {
-          console.log('全部质押量:', res)
-          this.pledgeTotal = res
-        }).catch(e => {
-          console.log(e)
-        })
-      }
+      selected: ''
     }
   },
   methods: {
@@ -110,13 +74,7 @@ export default {
       this.pledgeDialog = false
       this.pickupDialog = false
       this.redeemDialog = true
-    },
-    // 获取挖矿总量
-    getMiningTotal () {
     }
-  },
-  created () {
-    // this.getMiningTotal()
   }
 }
 </script>

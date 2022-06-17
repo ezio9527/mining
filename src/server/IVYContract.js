@@ -288,25 +288,26 @@ class IVYContract {
             reject(error)
           }
           if (response.result) {
-            // timer_takeGain = setInterval(() => {
-            //   number_takeGain++
-            //   // 查询交易是否完成，这⾥要通过这个⽅法去⼀直查询交易是否完成
-            //   web3.eth.getTransactionReceipt(response.result).then(function (res) {
-            //     if (res == null) {
-            //       callback(res)
-            //     } else if (res.status) {
-            //       callback(res.status)
-            //       clearInterval(timer_takeGain)
-            //     } else {
-            //       clearInterval(timer_takeGain)
-            //     }
-            //   })
-            //   if (number_takeGain > 10) {
-            //     clearInterval(timer_takeGain)
-            //     callback('timeout')
-            //     number_takeGain = 1
-            //   }
-            // }, 2000)
+            let queryTimes = 0
+            const timer = setInterval(() => {
+              queryTimes++
+              // 查询交易是否完成，这⾥要通过这个⽅法去⼀直查询交易是否完成
+              IVYContract.web3.eth.getTransactionReceipt(response.result).then(res => {
+                if (res == null) {
+                  resolve(res)
+                } else if (res.status) {
+                  resolve(res.status)
+                  clearInterval(timer)
+                } else {
+                  clearInterval(timer)
+                }
+              })
+              if (queryTimes > 10) {
+                clearInterval(timer)
+                queryTimes = 0
+                reject(new Error('timeout'))
+              }
+            }, 2000)
           }
         })
         // getGas调用结束

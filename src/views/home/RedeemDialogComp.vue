@@ -79,13 +79,18 @@ export default {
   },
   methods: {
     redeem () {
+      this.$emit('update:visible', false)
+      this.$emit('close')
       this.ivyContract.redeem({ amount: this.redeemList[this.checked], depositId: this.checked })
     }
   }
 }
 </script>
 
-<style lang="less" scoped>
+<style scoped>
 .redeem-dialog-comp {
+  --van-radio-border-color: var(--primary-color);
+  --van-radio-checked-icon-color: var(--primary-color);
+  --van-radio-checked-icon-color: var(--primary-color);
 }
 </style>

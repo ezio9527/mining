@@ -18,7 +18,6 @@
 import BaseDialog from '@/components/BaseDialog'
 import { mapGetters } from 'vuex'
 import Web3 from 'web3'
-// import Web3 from 'web3'
 export default {
   name: 'RedeemDialogComp',
   components: {
@@ -33,14 +32,14 @@ export default {
   data () {
     return {
       dialogVisible: false,
-      balance: 0,
       number: null
     }
   },
   computed: {
     ...mapGetters({
       cakeLPContract: 'contract/getCakeLPContract',
-      ivyContract: 'contract/getIVYContract'
+      ivyContract: 'contract/getIVYContract',
+      balance: 'contract/getLpBalance'
     }),
     disabled () {
       return this.number === null || !Number(this.number) || this.number <= 0 || this.number > this.balance
@@ -49,29 +48,11 @@ export default {
   watch: {
     visible (val) {
       this.dialogVisible = val
-      if (this.cakeLPContract) {
-        this.cakeLPContract.getBalanceInfo().then(res => {
-          this.balance = res
-          console.log('lp余额:', res)
-        }).catch(e => {
-          console.log(e)
-        })
-      }
     },
     dialogVisible (val) {
       if (!val) {
         this.$emit('update:visible', false)
         this.$emit('close')
-      }
-    },
-    cakeLPContract (val) {
-      if (val) {
-        this.cakeLPContract.getBalanceInfo().then(res => {
-          this.balance = res
-          console.log('lp余额:', res)
-        }).catch(e => {
-          console.log(e)
-        })
       }
     }
   },
@@ -81,13 +62,13 @@ export default {
       this.$emit('close')
       // 查询授权
       this.cakeLPContract.allowance().then(number => {
-        this.$toast.success(this.$t('common.approveWaiting'))
         if (number >= Web3.utils.toWei(this.number)) {
           this.ivyContract.pledge({
             amount: this.number
           })
         } else {
           this.cakeLPContract.approve(Web3.utils.toWei(this.number) - number).then(() => {
+            this.$toast.success(this.$t('common.approveWaiting'))
             this.ivyContract.pledge({
               amount: this.number
             })

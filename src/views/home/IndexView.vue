@@ -10,8 +10,6 @@
 import HeaderComp from './HeaderComp'
 import MiningComp from './MiningComp'
 import DescriptionComp from './DescriptionComp'
-import IVYContract from '@/server/IVYContract'
-import CakeLPContract from '@/server/CakeLPContract'
 
 export default {
   name: 'HomeView',
@@ -29,10 +27,7 @@ export default {
     window.ethereum.enable().then((accounts) => {
       this.connection = true
       const account = accounts[0]
-      const ivyContract = IVYContract.getInstanceof(account)
-      const lpContract = CakeLPContract.getInstanceof(account)
-      this.$store.commit('contract/setIVYContract', ivyContract)
-      this.$store.commit('contract/setCakeLPContract', lpContract)
+      this.$store.dispatch('contract/initialize', account)
     })
   }
 }

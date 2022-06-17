@@ -16,7 +16,7 @@
         </div>
       </div>
 
-      <div class="header-comp-container_panel">
+      <div id="header-comp-container_panel" class="header-comp-container_panel">
         <div><span>{{ $t('home.issue') }}:</span><span>{{ TOTAL }}</span></div>
         <div><span>{{ $t('home.contract', { symbol: 'BSC'}) }}:</span><span>{{ CONTRACT_ADDRESS }}</span></div>
         <img src="@img/home/flower.png">
@@ -29,7 +29,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IVYContract from '@/server/IVYContract'
-import CakeLPContract from '@/server/CakeLPContract'
+import ClipboardJS from 'clipboard'
 
 export default {
   name: 'HeaderComp',
@@ -56,12 +56,22 @@ export default {
       window.ethereum.enable().then((accounts) => {
         this.$emit('update:connection', true)
         const account = accounts[0]
-        const ivyContract = IVYContract.getInstanceof(account)
-        const lpContract = CakeLPContract.getInstanceof(account)
-        this.$store.commit('contract/setIVYContract', ivyContract)
-        this.$store.commit('contract/setCakeLPContract', lpContract)
+        this.$store.dispatch('contract/initialize', account)
       })
     }
+  },
+  mounted () {
+    const clipboard = new ClipboardJS('#header-comp-container_panel', {
+      text: () => {
+        return this.CONTRACT_ADDRESS
+      }
+    })
+    clipboard.on('success', e => {
+      this.$toast(this.$t('common.contractCopySuccess'))
+    })
+    clipboard.on('error', e => {
+      this.$toast(this.$t('common.contractCopyFailed'))
+    })
   },
   setup () {
     const lang = ref('zh')
@@ -162,6 +172,18 @@ export default {
         right: 0;
         bottom: 0;
         height: 100%;
+      }
+      &>div:nth-child(2) {
+        display: flex;
+        overflow: hidden;
+        span {
+          white-space: nowrap;
+        }
+        span:last-child {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
     }
   }

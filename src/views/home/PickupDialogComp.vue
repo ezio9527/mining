@@ -30,7 +30,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      ivyContract: 'contract/getIVYContract'
+      ivyContract: 'contract/getIVYContract',
+      miningVol: 'contract/getMiningVol'
     })
   },
   watch: {
@@ -42,26 +43,17 @@ export default {
         this.$emit('update:visible', false)
         this.$emit('close')
       }
-    },
-    ivyContract (val) {
-      if (val) {
-        this.ivyContract.getMiningNumber().then(res => {
-          console.log('个人挖矿量:', res)
-          this.miningVol = res
-        }).catch(e => {
-          console.log(e)
-        })
-      }
     }
   },
   data () {
     return {
-      dialogVisible: false,
-      miningVol: 0
+      dialogVisible: false
     }
   },
   methods: {
     pickup () {
+      this.$emit('update:visible', false)
+      this.$emit('close')
       this.ivyContract.pickup()
     }
   }
