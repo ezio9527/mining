@@ -1,6 +1,6 @@
 <template>
   <div class="home-view">
-    <HeaderComp v-model:connection="connection"></HeaderComp>
+    <HeaderComp></HeaderComp>
     <MiningComp></MiningComp>
     <DescriptionComp></DescriptionComp>
   </div>
@@ -20,15 +20,7 @@ export default {
   },
   data () {
     return {
-      connection: false
     }
-  },
-  mounted () {
-    window.ethereum.enable().then((accounts) => {
-      this.connection = true
-      const account = accounts[0]
-      this.$store.dispatch('contract/initialize', account)
-    })
   }
 }
 </script>

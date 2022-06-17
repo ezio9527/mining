@@ -60,10 +60,8 @@ class CakeLPContract {
   approve (number) {
     return new Promise((resolve, reject) => {
       this.contract.methods.approve(IVYContract.CONTRACT_ADDRESS, (number + '')).send({
-      }).then(res => {
-        resolve(Web3.utils.fromWei(res))
-      }).catch(err => {
-        reject(err)
+      }, () => {
+        resolve()
       })
     })
   }

@@ -2,6 +2,7 @@ import { IVY_ABI, IVY_ABI_STAKE, IVY_ABI_UNSTAKE, IVY_ABI_PROCESS_REWARDS } from
 import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
 import { Toast } from 'vant'
+import i18n from '@/assets/lang'
 
 class IVYContract {
   static instanceofObj = null
@@ -97,6 +98,7 @@ class IVYContract {
     use = Web3.utils.padLeft(use, 64)
     const data = funcSign + amount + lock + use
     this.sendEtherFrom({ data }).then(res => {
+      Toast(i18n.global.t('home.pledgeNumber') + Web3.utils.toWei(amount.toString()))
       console.log('质押成功', res)
     }).catch(e => {
       Toast.fail(e.message)

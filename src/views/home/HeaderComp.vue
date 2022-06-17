@@ -9,7 +9,7 @@
         </div>
         <div>
           <button v-if="connection"><i class="header-comp-container_dot"></i>{{ $t('home.connected') }}</button>
-          <button v-else @click="connect">{{ $t('home.connect') }}</button>
+          <button v-else @click="enable">{{ $t('home.connect') }}</button>
           <van-dropdown-menu>
             <van-dropdown-item v-model="lang" :options="langList" @change="languageSelect"/>
           </van-dropdown-menu>
@@ -35,14 +35,9 @@ export default {
   name: 'HeaderComp',
   data () {
     return {
-      CONTRACT_ADDRESS: IVYContract.CONTRACT_ADDRESS,
+      connection: false,
+      CONTRACT_ADDRESS: IVYContract.TOKEN_ADDRESS,
       TOTAL: 10000 // 发行总量
-    }
-  },
-  props: {
-    connection: {
-      type: Boolean,
-      default: false
     }
   },
   methods: {
@@ -53,14 +48,50 @@ export default {
     },
     // 链接钱包
     connect () {
+      window.ethereum.request({
+        method: 'wallet_addEthereumChain', // Metamask的api名称
+        params: [{
+          chainId: '0x38', // 网络id，16进制的字符串
+          chainName: 'BNB Chain', // 添加到钱包后显示的网络名称
+          rpcUrls: [
+            'https://bsc-dataseed.binance.org/' // rpc地址
+          ],
+          // iconUrls: [
+          //   'https://testnet.hecoinfo.com/favicon.png' // 网络的图标，暂时没看到在哪里会显示
+          // ],
+          blockExplorerUrls: [
+            'https://bscscan.com/' // 网络对应的区块浏览器
+          ],
+          nativeCurrency: {
+            // 网络主币的信息
+            name: 'BNB',
+            symbol: 'BNB',
+            decimals: 18
+          }
+        }]
+      })
+    },
+    // 获取授权
+    enable () {
       window.ethereum.enable().then((accounts) => {
-        this.$emit('update:connection', true)
-        const account = accounts[0]
-        this.$store.dispatch('contract/initialize', account)
+        if (Number(window.ethereum.chainId) === 0x38) {
+          this.connection = true
+          const account = accounts[0]
+          this.$store.dispatch('contract/initialize', account)
+        } else {
+          this.connection = false
+          this.connect()
+        }
+      }).catch(e => {
+        console.log('授权失败', e)
       })
     }
   },
   mounted () {
+    window.ethereum.autoRefreshOnNetworkChange = false
+    window.ethereum.on('networkChanged', chainId => {
+      this.enable()
+    })
     const clipboard = new ClipboardJS('#header-comp-container_panel', {
       text: () => {
         return this.CONTRACT_ADDRESS
@@ -132,6 +163,8 @@ export default {
         padding: 4px 8px;
         border-radius: 6px;
         margin-right: 6px;
+        display: inline-flex;
+        align-items: center;
       }
       .header-comp-container_dot {
         display: inline-block;

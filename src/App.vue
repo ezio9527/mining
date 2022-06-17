@@ -3,9 +3,11 @@
 </template>
 
 <script>
+import eruda from 'eruda'
 export default {
   name: 'App',
   created () {
+    eruda.init()
   }
 }
 </script>

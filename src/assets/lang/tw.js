@@ -1,36 +1,41 @@
 module.exports = {
   common: {
+    contractCopySuccess: '合約地址複製成功',
+    contractCopyFailed: '合約地址複製失敗',
+    waiting: '請等待交易確認',
+    approveWaiting: '請等待授權確認'
   },
   component: {
-    pledge: '质押',
+    pledge: '質押',
     pickup: '提取',
-    redeem: '赎回',
+    redeem: '贖回',
     all: '全部'
   },
   error: {
   },
   // 主页
   home: {
-    connect: '链接钱包',
-    issue: '发行总量',
-    contract: '%{symbol}合约',
-    mining: '质押%{symbol}挖矿',
-    miningVol: '已挖矿量',
-    pledgeTotal: '总%{symbol}质押量',
-    pledgeMineTotal: '个人%{symbol}质押量',
-    miningTotal: '挖矿总量',
-    miningMineTotal: '个人挖矿总量',
-    project: '项目介绍',
-    audit: '审计机构',
-    partner: '合作伙伴',
-    projectDes: '常春藤，英文IVY，平台上的所有交易、抵押和治理都是透明的，且在链上进行。是在最大的去中心化应用生态系统币安智能链BSC上建立的，旨在为全球用户提供一套便于使用且高度透明的金融服务。',
-    pledgeNumber: '质押数量',
-    pledgeNumberPlaceholder: '请输入质押数量',
-    miningNumber: '挖矿数量',
-    pickupNumber: '提取数量',
-    pickupNumberPlaceholder: '请输入提取数量',
-    balance: '%{symbol}余额',
-    redeemNumber: '赎回数量',
-    redeemNumberPlaceholder: '请输入赎回数量'
+    connect: '鏈接錢包',
+    connected: '已鏈接',
+    issue: '發行總量',
+    contract: '%{symbol}合約',
+    mining: '質押%{symbol}挖礦',
+    miningVol: '已挖礦量',
+    pledgeTotal: '總%{symbol}質押量',
+    pledgeMineTotal: '個人%{symbol}質押量',
+    miningTotal: '挖礦總量',
+    miningMineTotal: '個人挖礦總量',
+    project: '項目介紹',
+    audit: '審計機構',
+    partner: '合作夥伴',
+    projectDes: '常春藤，英文IVY，平台上的所有交易、抵押和治理都是透明的，且在鏈上進行。是在最大的去中心化應用生態系統幣安智能鏈BSC上建立的，旨在為全球用戶提供一套便於使用且透明的金融服務。',
+    pledgeNumber: '質押數量',
+    pledgeNumberPlaceholder: '請輸入質押數量',
+    miningNumber: '挖礦數量',
+    pickupNumber: '提取數量',
+    pickupNumberPlaceholder: '請輸入提取數量',
+    balance: '%{symbol}餘額',
+    redeemNumber: '贖回數量',
+    redeemNumberPlaceholder: '請輸入贖回數量'
   }
 }

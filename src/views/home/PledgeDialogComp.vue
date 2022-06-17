@@ -69,6 +69,7 @@ export default {
         } else {
           this.cakeLPContract.approve(Web3.utils.toWei(this.number) - number).then(() => {
             this.$toast.success(this.$t('common.approveWaiting'))
+          }).finally(() => {
             this.ivyContract.pledge({
               amount: this.number
             })
