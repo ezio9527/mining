@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import eruda from 'eruda'
+// import eruda from 'eruda'
 export default {
   name: 'App',
   created () {
-    eruda.init()
+    // eruda.init()
   }
 }
 </script>
