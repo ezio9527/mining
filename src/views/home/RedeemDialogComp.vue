@@ -3,15 +3,22 @@
     <template #default>
       <van-radio-group v-model="checked">
         <van-cell-group inset>
-          <van-cell :title="$t('home.pledgeNumber') + ':' + item"  v-for="(item, index) in redeemList" :key="index">
-            <template #right-icon>
-              <van-radio :name="index" />
+          <van-cell v-for="(item, index) in redeemList" :class="{ checked: checked===index }" :key="index">
+            <template #title>
+              <van-field v-model="inputList[index]" :disabled="checked!==index" :label="$t('home.redeemNumber')" :placeholder="$t('home.redeemNumberPlaceholder')">
+                <template #right-icon>
+                  <van-radio :name="index" />
+                </template>
+              </van-field>
+            </template>
+            <template #label>
+              <span>{{ $t('home.pledgeNumber') + ':' + item }}</span>
             </template>
           </van-cell>
         </van-cell-group>
       </van-radio-group>
       <div>
-        <van-button @click="redeem" type="primary" color="#02B202" block>{{ $t('component.redeem') }}</van-button>
+        <van-button :disabled="disabled" @click="redeem" type="primary" color="#02B202" block>{{ $t('component.redeem') }}</van-button>
       </div>
     </template>
   </BaseDialog>
@@ -34,9 +41,11 @@ export default {
   },
   data () {
     return {
+      activeNames: [],
       dialogVisible: false,
       checked: 0,
-      redeemList: []
+      redeemList: [], // 需要赎回的item
+      inputList: []
     }
   },
   computed: {
@@ -44,7 +53,9 @@ export default {
       ivyContract: 'contract/getIVYContract'
     }),
     disabled () {
-      return this.redeemList.length === 0
+      const number = this.redeemList[this.checked]
+      const input = this.inputList[this.checked]
+      return !Number(input) || input < 0 || input > number
     }
   },
   watch: {
@@ -57,22 +68,31 @@ export default {
         this.$emit('close')
       }
     },
+    checked (val) {
+      // 清空未选中输入框
+      this.inputList = this.inputList.map((item, index) => {
+        item = val === index ? item : ''
+        return item
+      })
+    },
     ivyContract (val) {
       if (val) {
         this.ivyContract.getDepositLength().then(res => {
           console.log('个人质押列表长度:', res)
           const array = []
+          this.inputList = []
           for (let i = 0; i < res; i++) {
             this.ivyContract.getDepositDetails({ id: i }).then(res => {
               console.log('质押详情:', res)
               array.push(Web3.utils.fromWei(res.tokenAmount))
+              this.inputList.push('')
             }).catch(e => {
-              console.log(e)
+              console.log('质押详情获取错误++++++++++', e)
             })
           }
           this.redeemList = array
         }).catch(e => {
-          console.log(e)
+          console.log('质押获取错误---------', e)
         })
       }
     }
@@ -87,10 +107,19 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .redeem-dialog-comp {
   --van-radio-border-color: var(--primary-color);
   --van-radio-checked-icon-color: var(--primary-color);
   --van-radio-checked-icon-color: var(--primary-color);
+  .van-cell.van-field {
+    padding-left: 0 !important;
+  }
+  .van-cell {
+    background: none;
+  }
+  .checked {
+    background-color: rgba(76, 194, 144, .1);
+  }
 }
 </style>

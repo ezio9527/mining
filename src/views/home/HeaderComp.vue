@@ -114,6 +114,7 @@ export default {
     .header-comp-container_top {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       .header-container-top_logo {
         width: 32px;
         height: 32px;
