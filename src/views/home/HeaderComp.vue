@@ -18,7 +18,7 @@
 
       <div class="header-comp-container_panel">
         <div><span>{{ $t('home.issue') }}:</span><span>{{ TOTAL }}</span></div>
-        <div><span>{{ $t('home.contract', { symbol: 'BSC'}) }}:</span><span>000000000</span></div>
+        <div><span>{{ $t('home.contract', { symbol: 'BSC'}) }}:</span><span>{{ CONTRACT_ADDRESS }}</span></div>
         <img src="@img/home/flower.png">
       </div>
     </div>
@@ -35,6 +35,7 @@ export default {
   name: 'HeaderComp',
   data () {
     return {
+      CONTRACT_ADDRESS: IVYContract.CONTRACT_ADDRESS,
       TOTAL: 10000 // 发行总量
     }
   },

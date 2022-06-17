@@ -1,12 +1,12 @@
 <template>
   <BaseDialog class="pickup-dialog-comp" v-model:visible="dialogVisible">
     <template #default>
-      <van-field v-model="balance" :label="$t('home.miningNumber')" disabled/>
-      <van-field v-model="number" type="number" :label="$t('home.pickupNumber')" :placeholder="$t('home.pickupNumberPlaceholder')">
-        <template #button>
-          <van-button plain size="mini" type="primary" color="#02B202" @click="number = balance">{{ $t('component.all') }}</van-button>
-        </template>
-      </van-field>
+      <van-field v-model="miningVol" :label="$t('home.miningNumber')" disabled/>
+      <!--<van-field v-model="miningVol" type="number" :label="$t('home.pickupNumber')" :placeholder="$t('home.pickupNumberPlaceholder')">-->
+      <!--  <template #button>-->
+      <!--    <van-button plain size="mini" type="primary" color="#02B202" @click="number = balance">{{ $t('component.all') }}</van-button>-->
+      <!--  </template>-->
+      <!--</van-field>-->
       <div>
         <van-button @click="pickup" type="primary" color="#02B202" block>{{ $t('component.pickup') }}</van-button>
       </div>
@@ -31,10 +31,7 @@ export default {
   computed: {
     ...mapGetters({
       ivyContract: 'contract/getIVYContract'
-    }),
-    disabled () {
-      return this.number === null || !Number(this.number) || this.number <= 0 || this.number > this.balance
-    }
+    })
   },
   watch: {
     visible (val) {
@@ -45,22 +42,27 @@ export default {
         this.$emit('update:visible', false)
         this.$emit('close')
       }
+    },
+    ivyContract (val) {
+      if (val) {
+        this.ivyContract.getMiningNumber().then(res => {
+          console.log('个人挖矿量:', res)
+          this.miningVol = res
+        }).catch(e => {
+          console.log(e)
+        })
+      }
     }
   },
   data () {
     return {
       dialogVisible: false,
-      balance: 0,
-      number: null
+      miningVol: 0
     }
   },
   methods: {
     pickup () {
-      this.ivyContract.pickup().then(res => {
-        console.log('提取结果', res)
-      }).catch(e => {
-        console.log('提取失败', e)
-      })
+      this.ivyContract.pickup()
     }
   }
 }

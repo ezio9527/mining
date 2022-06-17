@@ -846,7 +846,48 @@ const IVY_ABI_STAKE = {
   stateMutability: 'nonpayable',
   type: 'function'
 }
+
+const IVY_ABI_UNSTAKE = {
+  inputs: [
+    {
+      internalType: 'uint256',
+      name: '_depositId',
+      type: 'uint256'
+    },
+    {
+      internalType: 'uint256',
+      name: '_amount',
+      type: 'uint256'
+    },
+    {
+      internalType: 'bool',
+      name: '_useSIVY',
+      type: 'bool'
+    }
+  ],
+  name: 'unstake',
+  outputs: [],
+  stateMutability: 'nonpayable',
+  type: 'function'
+}
+
+const IVY_ABI_PROCESS_REWARDS = {
+  inputs: [
+    {
+      internalType: 'bool',
+      name: '_useSIVY',
+      type: 'bool'
+    }
+  ],
+  name: 'processRewards',
+  outputs: [],
+  stateMutability: 'nonpayable',
+  type: 'function'
+}
+
 export {
   IVY_ABI,
-  IVY_ABI_STAKE
+  IVY_ABI_STAKE,
+  IVY_ABI_UNSTAKE,
+  IVY_ABI_PROCESS_REWARDS
 }

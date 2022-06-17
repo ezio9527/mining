@@ -60,6 +60,11 @@ export default {
   watch: {
     ivyContract (val) {
       if (val) {
+        this.ivyContract.getBalanceInfo().then(res => {
+          console.log('IVY余额:', res)
+        }).catch(e => {
+          console.log(e)
+        })
         this.ivyContract.getMiningNumber().then(res => {
           console.log('个人挖矿量:', res)
           this.miningVol = res
