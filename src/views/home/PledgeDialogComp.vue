@@ -17,6 +17,7 @@
 <script>
 import BaseDialog from '@/components/BaseDialog'
 import { mapGetters } from 'vuex'
+import Web3 from 'web3'
 // import Web3 from 'web3'
 export default {
   name: 'RedeemDialogComp',
@@ -76,26 +77,23 @@ export default {
   },
   methods: {
     pledge () {
-      this.ivyContract.pledge({
-        amount: this.number
+      this.$emit('update:visible', false)
+      this.$emit('close')
+      // 查询授权
+      this.cakeLPContract.allowance().then(number => {
+        this.$toast.success(this.$t('common.approveWaiting'))
+        if (number >= Web3.utils.toWei(this.number)) {
+          this.ivyContract.pledge({
+            amount: this.number
+          })
+        } else {
+          this.cakeLPContract.approve(Web3.utils.toWei(this.number) - number).then(() => {
+            this.ivyContract.pledge({
+              amount: this.number
+            })
+          })
+        }
       })
-      // this.$emit('update:visible', false)
-      // this.$emit('close')
-      // // 查询授权
-      // this.cakeLPContract.allowance().then(number => {
-      //   this.$toast.success(this.$t('common.approveWaiting'))
-      //   if (number >= Web3.utils.toWei(this.number)) {
-      //     this.ivyContract.pledge({
-      //       amount: this.number
-      //     })
-      //   } else {
-      //     this.cakeLPContract.approve(Web3.utils.toWei(this.number) - number).then(() => {
-      //       this.ivyContract.pledge({
-      //         amount: this.number
-      //       })
-      //     })
-      //   }
-      // })
     }
   }
 }
