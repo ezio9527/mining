@@ -1,24 +1,24 @@
 <template>
   <BaseDialog class="redeem-dialog-comp" v-model:visible="dialogVisible">
     <template #default>
-      <van-radio-group v-model="checked" v-show="redeemList.length > 0">
+      <van-radio-group v-model="checked" v-show="JSON.stringify(redeemList) !== '{}'">
         <van-cell-group inset>
-          <van-cell v-for="(item, index) in redeemList" :class="{ checked: checked===index }" @click="checked=index" :key="index">
+          <van-cell v-for="(item, index) in redeemList" :class="{ checked: checked===item.id }" @click="checked=item.id" :key="index">
             <template #title>
-              <van-field v-model="inputList[index]" :disabled="checked!==index" :label="$t('home.redeemNumber')"
+              <van-field v-model="inputList[item.id]" :disabled="checked!==item.id" :label="$t('home.redeemNumber')"
                          :placeholder="$t('home.redeemNumberPlaceholder')">
                 <template #right-icon>
-                  <van-radio :name="index"/>
+                  <van-radio :name="item.id"/>
                 </template>
               </van-field>
             </template>
             <template #label>
-              <span>{{ $t('home.pledgeNumber') + ':' + item }}</span>
+              <span>{{ $t('home.pledgeNumber') + ':' + item.value }}</span>
             </template>
           </van-cell>
         </van-cell-group>
       </van-radio-group>
-      <van-empty image="search" description=""  v-show="redeemList.length === 0"/>
+      <van-empty image="search" description=""  v-show="JSON.stringify(redeemList) === '{}'"/>
       <div>
         <van-button :disabled="disabled" @click="redeem" type="primary" color="#02B202" block>{{
             $t('component.redeem')
@@ -49,9 +49,9 @@ export default {
     return {
       activeNames: [],
       dialogVisible: false,
-      checked: 0,
-      redeemList: [], // 需要赎回的item
-      inputList: []
+      checked: -1,
+      redeemList: {}, // 需要赎回的item
+      inputList: {}
     }
   },
   computed: {
@@ -59,9 +59,12 @@ export default {
       ivyContract: 'contract/getIVYContract'
     }),
     disabled () {
-      const number = this.redeemList[this.checked]
+      if (this.checked < 0) {
+        return true
+      }
+      const number = this.redeemList[this.checked].value
       const input = this.inputList[this.checked]
-      return isNaN(Number(input)) || input < 0 || input > number
+      return isNaN(Number(input)) || input <= 0 || input > number
     }
   },
   watch: {
@@ -79,10 +82,9 @@ export default {
     },
     checked (val) {
       // 清空未选中输入框
-      this.inputList = this.inputList.map((item, index) => {
-        item = val === index ? this.redeemList[index] : ''
-        return item
-      })
+      for (const id in this.inputList) {
+        this.inputList[id] = Number(id) === val ? this.redeemList[id].value : ''
+      }
     },
     ivyContract (val) {
       if (val) {
@@ -98,10 +100,17 @@ export default {
           promiseList.push(this.ivyContract.getDepositDetails({ id: i }))
         }
         Promise.all(promiseList).then(detailsList => {
-          this.inputList = []
-          this.redeemList = detailsList.map(item => {
-            this.inputList.push('')
-            return Web3.utils.fromWei(item.tokenAmount)
+          this.inputList = {}
+          this.redeemList = {}
+          detailsList.forEach((item, index) => {
+            const amount = Number(Web3.utils.fromWei(item.tokenAmount))
+            if (amount > 0) {
+              this.inputList[index] = ''
+              this.redeemList[index] = {
+                id: index,
+                value: amount
+              }
+            }
           })
         }).catch(() => {
           this.qry()
@@ -119,7 +128,7 @@ export default {
         forbidClick: true
       })
       this.ivyContract.redeem({
-        amount: this.redeemList[this.checked],
+        amount: this.inputList[this.checked],
         depositId: this.checked
       }).then(hash => {
         this.ivyContract.getTransactionReceipt(hash).then(() => {
