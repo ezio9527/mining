@@ -86,6 +86,7 @@ export default {
           this.connection = true
           const account = accounts[0]
           this.$store.dispatch('contract/initialize', account)
+          localStorage.setItem('enable', 'true')
         } else {
           this.connection = false
           this.connect()
@@ -96,9 +97,9 @@ export default {
     }
   },
   mounted () {
-    tp.getAppInfo().then(info => {
-      console.log(info)
-    })
+    if (localStorage.getItem('enable')) {
+      this.enable()
+    }
     window.ethereum.autoRefreshOnNetworkChange = false
     window.ethereum.on('networkChanged', chainId => {
       this.enable()

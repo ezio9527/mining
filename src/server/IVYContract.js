@@ -2,7 +2,6 @@ import { IVY_ABI, IVY_ABI_STAKE, IVY_ABI_UNSTAKE, IVY_ABI_PROCESS_REWARDS } from
 import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
 import { Toast } from 'vant'
-import i18n from '@/assets/lang'
 
 class IVYContract {
   static instanceofObj = null
@@ -78,20 +77,20 @@ class IVYContract {
    * @param address
    */
   pledge ({ address = IVYContract.walletAddress, amount, lock = 0, use = false }) {
-    Toast(i18n.global.t('home.pledgeNumber') + amount.toString())
-    // fromWei
-    const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_STAKE)
-    amount = Web3.utils.toHex(Web3.utils.toWei(amount.toString())).substring(2)
-    amount = Web3.utils.padLeft(amount, 64)
-    lock = Web3.utils.toHex(Web3.utils.toWei(lock.toString())).substring(2)
-    lock = Web3.utils.padLeft(lock, 64)
-    use = Web3.utils.toHex(Web3.utils.toWei('0')).substring(2)
-    use = Web3.utils.padLeft(use, 64)
-    const data = funcSign + amount + lock + use
-    this.sendEtherFrom({ data }).then(res => {
-      Toast(i18n.global.t('common.pledgeSuccess') + ':' + amount.toString())
-    }).catch(e => {
-      Toast.fail(i18n.global.t('common.pledgeFailed'))
+    return new Promise((resolve, reject) => {
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_STAKE)
+      amount = Web3.utils.toHex(Web3.utils.toWei(amount.toString())).substring(2)
+      amount = Web3.utils.padLeft(amount, 64)
+      lock = Web3.utils.toHex(Web3.utils.toWei(lock.toString())).substring(2)
+      lock = Web3.utils.padLeft(lock, 64)
+      use = Web3.utils.toHex(Web3.utils.toWei('0')).substring(2)
+      use = Web3.utils.padLeft(use, 64)
+      const data = funcSign + amount + lock + use
+      this.sendEtherFrom({ data }).then(hash => {
+        resolve(this.getTransactionReceipt(hash))
+      }).catch(e => {
+        reject(e)
+      })
     })
   }
 
@@ -100,9 +99,9 @@ class IVYContract {
    * @param address
    */
   redeem ({ address = IVYContract.walletAddress, amount = 0, depositId = 0, use = false }) {
-    console.log('赎回数量', Web3.utils.toWei(amount.toString()))
+    console.log('赎回数量', amount.toString(), depositId, use)
     const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_UNSTAKE)
-    depositId = Web3.utils.toHex(Web3.utils.toWei(depositId.toString())).substring(2)
+    depositId = Web3.utils.toHex(depositId.toString()).substring(2)
     depositId = Web3.utils.padLeft(depositId, 64)
     amount = Web3.utils.toHex(Web3.utils.toWei(amount.toString())).substring(2)
     amount = Web3.utils.padLeft(amount, 64)
@@ -274,38 +273,45 @@ class IVYContract {
           from
         }
         window.ethereum.sendAsync(payload, (error, response) => {
-          const rejected = 'User denied transaction signature.'
-          if (response.error && response.error.message.includes(rejected)) {
-            resolve('refuse')
-          }
           if (error) {
             reject(error)
           }
           if (response.result) {
-            let queryTimes = 0
-            const timer = setInterval(() => {
-              queryTimes++
-              // 查询交易是否完成，这⾥要通过这个⽅法去⼀直查询交易是否完成
-              IVYContract.web3.eth.getTransactionReceipt(response.result).then(res => {
-                if (res == null) {
-                  resolve(res)
-                } else if (res.status) {
-                  resolve(res.status)
-                  clearInterval(timer)
-                } else {
-                  clearInterval(timer)
-                }
-              })
-              if (queryTimes > 10) {
-                clearInterval(timer)
-                queryTimes = 0
-                reject(new Error('timeout'))
-              }
-            }, 2000)
+            resolve(response.result)
           }
         })
         // getGas调用结束
       })
+    })
+  }
+
+  /**
+   * 确认交易是否成功
+   * @param {String} hash 交易Hash
+   */
+  getTransactionReceipt (hash) {
+    return new Promise((resolve, reject) => {
+      let queryTimes = 0
+      const timer = setInterval(() => {
+        queryTimes++
+        // 查询交易是否完成，这⾥要通过这个⽅法去⼀直查询交易是否完成
+        IVYContract.web3.eth.getTransactionReceipt(hash).then(res => {
+          if (res == null) {
+            resolve(res)
+          } else if (res.status) {
+            resolve(true)
+            clearInterval(timer)
+          } else {
+            resolve(false)
+            clearInterval(timer)
+          }
+        })
+        if (queryTimes > 10) {
+          clearInterval(timer)
+          queryTimes = 0
+          reject(new Error('timeout'))
+        }
+      }, 2000)
     })
   }
 }

@@ -39,6 +39,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      ivyContract: 'contract/getIVYContract',
       miningVol: 'contract/getMiningVol',
       pledgeVol: 'contract/getPledgeVol',
       pledgeTotal: 'contract/getPledgeTotal'

@@ -57,24 +57,46 @@ export default {
     }
   },
   methods: {
+    approve () {
+      return new Promise(resolve => {
+        // 查询授权
+        this.cakeLPContract.allowance().then(number => {
+          if (number >= Web3.utils.toWei(this.number)) {
+            resolve()
+          } else {
+            this.cakeLPContract.approve(Web3.utils.toWei(this.number) - number).then(() => {
+              this.$toast.success(this.$t('common.approveWaiting'))
+            }).finally(() => {
+              resolve()
+            })
+          }
+        })
+      })
+    },
     pledge () {
       this.$emit('update:visible', false)
       this.$emit('close')
-      // 查询授权
-      this.cakeLPContract.allowance().then(number => {
-        if (number >= Web3.utils.toWei(this.number)) {
-          this.ivyContract.pledge({
-            amount: this.number
+      this.$toast.loading({
+        message: this.$t('common.waiting'),
+        duration: 5000,
+        forbidClick: true
+      })
+      this.approve().then(() => {
+        this.ivyContract.pledge({
+          amount: this.number
+        }).then(result => {
+          this.$notify({
+            type: result ? 'success' : 'danger',
+            message: result ? this.$t('common.pledgeSuccess', { number: this.number, symbol: 'LP' }) : this.$t('common.pledgeFailed'),
+            duration: 5000
           })
-        } else {
-          this.cakeLPContract.approve(Web3.utils.toWei(this.number) - number).then(() => {
-            this.$toast.success(this.$t('common.approveWaiting'))
-          }).finally(() => {
-            this.ivyContract.pledge({
-              amount: this.number
-            })
+        }).catch(() => {
+          this.$notify({
+            type: 'danger',
+            message: this.$t('common.pledgeFailed'),
+            duration: 5000
           })
-        }
+        })
       })
     }
   }
