@@ -78,9 +78,8 @@ class IVYContract {
    * @param address
    */
   pledge ({ address = IVYContract.walletAddress, amount, lock = 0, use = false }) {
-    Toast(i18n.global.t('home.pledgeNumber') + Web3.utils.toWei(amount.toString()))
+    Toast(i18n.global.t('home.pledgeNumber') + amount.toString())
     // fromWei
-    console.log('质押数量', Web3.utils.toWei(amount.toString()))
     const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_STAKE)
     amount = Web3.utils.toHex(Web3.utils.toWei(amount.toString())).substring(2)
     amount = Web3.utils.padLeft(amount, 64)
@@ -90,10 +89,9 @@ class IVYContract {
     use = Web3.utils.padLeft(use, 64)
     const data = funcSign + amount + lock + use
     this.sendEtherFrom({ data }).then(res => {
-      console.log('质押成功', res)
+      Toast(i18n.global.t('common.pledgeSuccess') + ':' + amount.toString())
     }).catch(e => {
-      Toast.fail(e.message)
-      console.log('质押失败')
+      Toast.fail(i18n.global.t('common.pledgeFailed'))
     })
   }
 

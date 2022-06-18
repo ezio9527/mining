@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog class="redeem-dialog-comp" v-model:visible="dialogVisible">
+  <BaseDialog class="pledge-dialog-comp" v-model:visible="dialogVisible">
     <template #default>
       <van-field v-model="balance" :label="$t('home.balance', { symbol: 'LP' })" disabled/>
       <van-field v-model="number" type="number" :label="$t('home.pledgeNumber')" :placeholder="$t('home.pledgeNumberPlaceholder')">
@@ -82,6 +82,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.redeem-dialog-comp {
+.pledge-dialog-comp {
 }
 </style>

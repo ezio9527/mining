@@ -1,0 +1,16 @@
+{
+  "activity": {
+    "startTime": {
+      "description": "活动开始时间 2022年6月18日0时",
+      "year": 2022,
+      "month": 6,
+      "date": 18,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0,
+      "ms": 0
+    },
+    "days": 120,
+    "totalYields": 6000
+  }
+}

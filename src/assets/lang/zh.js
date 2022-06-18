@@ -3,7 +3,9 @@ module.exports = {
     contractCopySuccess: '合约地址复制成功',
     contractCopyFailed: '合约地址复制失败',
     waiting: '请等待交易确认',
-    approveWaiting: '请等待授权确认'
+    approveWaiting: '请等待授权确认',
+    pledgeSuccess: '质押成功',
+    pledgeFailed: '质押失败'
   },
   component: {
     pledge: '质押',

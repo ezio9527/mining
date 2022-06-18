@@ -1,5 +1,5 @@
 <template>
-  <van-overlay class="base-dialog" :show="dialogVisible" @click="dialogVisible = false">
+  <van-overlay class="base-dialog" :show="dialogVisible" @click="dialogVisible = false" :lock-scroll="false">
     <div class="base-dialog_wrapper" @click.stop>
       <div class="base-dialog_container">
         <div>

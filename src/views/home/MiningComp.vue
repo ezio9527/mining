@@ -5,7 +5,7 @@
       <img src="@img/home/shovel.png"><span>{{ $t('home.mining', { symbol: 'LP' }) }}</span>
     </div>
     <div class="mining-comp_line">{{ $t('home.miningVol') }}</div>
-    <div class="mining-comp_line mining-comp_total">{{ miningAllTotal }}</div>
+    <div class="mining-comp_line mining-comp_total">{{ miningAllTotalFilter }}</div>
     <div class="mining-comp_line mining-comp-line_align"><span>{{ $t('home.pledgeTotal', { symbol: 'LP' }) }}</span><span>{{ pledgeTotal }}</span></div>
     <div class="mining-comp_line mining-comp-line_align"><span>{{ $t('home.pledgeMineTotal', { symbol: 'LP' }) }}</span><span>{{ pledgeVol }}</span></div>
     <div class="mining-comp_line mining-comp-line_align"><span>{{ $t('home.miningTotal') }}</span><span>{{ MINING_TOTAL }}</span></div>
@@ -28,6 +28,7 @@ import PledgeDialogComp from './PledgeDialogComp'
 import PickupDialogComp from './PickupDialogComp'
 import RedeemDialogComp from './RedeemDialogComp'
 import { mapGetters } from 'vuex'
+import config from '@data/config.json'
 export default {
   name: 'MiningComp',
   components: {
@@ -38,15 +39,22 @@ export default {
   },
   computed: {
     ...mapGetters({
-      miningAllTotal: 'contract/getMiningAllTotal',
       miningVol: 'contract/getMiningVol',
       pledgeVol: 'contract/getPledgeVol',
       pledgeTotal: 'contract/getPledgeTotal'
-    })
+    }),
+    miningAllTotalFilter () {
+      if (this.miningAllTotal >= config.activity.totalYields) {
+        return config.activity.totalYields
+      } else {
+        return this.miningAllTotal.toFixed(4)
+      }
+    }
   },
   data () {
     return {
-      MINING_TOTAL: 6000, // 挖矿总量
+      MINING_TOTAL: config.activity.totalYields, // 挖矿总量
+      miningAllTotal: 0,
       pledgeDialog: false,
       pickupDialog: false,
       redeemDialog: false,
@@ -75,6 +83,15 @@ export default {
       this.pickupDialog = false
       this.redeemDialog = true
     }
+  },
+  created () {
+    setInterval(() => {
+      this.miningAllTotal = this.$CalculateMining.getYields({
+        total: config.activity.totalYields,
+        startTime: new Date(config.activity.startTime.year, config.activity.startTime.month - 1, config.activity.startTime.date, config.activity.startTime.hours, config.activity.startTime.minutes, config.activity.startTime.seconds, config.activity.startTime.ms),
+        days: config.activity.days
+      })
+    }, 1000)
   }
 }
 </script>

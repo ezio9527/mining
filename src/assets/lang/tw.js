@@ -3,7 +3,9 @@ module.exports = {
     contractCopySuccess: '合約地址複製成功',
     contractCopyFailed: '合約地址複製失敗',
     waiting: '請等待交易確認',
-    approveWaiting: '請等待授權確認'
+    approveWaiting: '請等待授權確認',
+    pledgeSuccess: '質押成功',
+    pledgeFailed: '質押失敗'
   },
   component: {
     pledge: '質押',

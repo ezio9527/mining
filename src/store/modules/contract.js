@@ -94,12 +94,12 @@ const actions = {
       }).catch(e => {
         console.log(e)
       })
-      ivyContract.getMiningTotal().then(res => {
-        console.log('已挖矿量:', res)
-        commit('setMiningAllTotal', res)
-      }).catch(e => {
-        console.log(e)
-      })
+      // ivyContract.getMiningTotal().then(res => {
+      //   console.log('已挖矿量:', res)
+      //   commit('setMiningAllTotal', res)
+      // }).catch(e => {
+      //   console.log(e)
+      // })
       ivyContract.getPledgeTotal().then(res => {
         console.log('个人质押量:', res)
         commit('setPledgeVol', res)
