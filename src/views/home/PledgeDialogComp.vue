@@ -85,10 +85,18 @@ export default {
         this.ivyContract.pledge({
           amount: this.number
         }).then(result => {
-          this.$notify({
-            type: result ? 'success' : 'danger',
-            message: result ? this.$t('common.pledgeSuccess', { number: this.number, symbol: 'LP' }) : this.$t('common.pledgeFailed'),
-            duration: 5000
+          result.then(() => {
+            this.$notify({
+              type: 'success',
+              message: this.$t('common.pledgeSuccess', { number: this.number, symbol: 'LP' }),
+              duration: 5000
+            })
+          }).catch(() => {
+            this.$notify({
+              type: 'danger',
+              message: this.$t('common.pledgeFailed'),
+              duration: 5000
+            })
           })
         }).catch(() => {
           this.$notify({

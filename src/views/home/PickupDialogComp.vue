@@ -60,10 +60,18 @@ export default {
         forbidClick: true
       })
       this.ivyContract.pickup().then(result => {
-        this.$notify({
-          type: result ? 'success' : 'danger',
-          message: result ? this.$t('common.pickupSuccess') : this.$t('common.pickupFailed'),
-          duration: 5000
+        result.then(() => {
+          this.$notify({
+            type: 'success',
+            message: this.$t('common.pickupSuccess'),
+            duration: 5000
+          })
+        }).catch(() => {
+          this.$notify({
+            type: 'danger',
+            message: this.$t('common.pickupFailed'),
+            duration: 5000
+          })
         })
       }).catch(() => {
         this.$notify({
