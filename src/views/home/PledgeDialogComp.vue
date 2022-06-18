@@ -84,8 +84,8 @@ export default {
       this.approve().then(() => {
         this.ivyContract.pledge({
           amount: this.number
-        }).then(result => {
-          result.then(() => {
+        }).then(hash => {
+          this.ivyContract.getTransactionReceipt(hash).then(() => {
             this.$notify({
               type: 'success',
               message: this.$t('common.pledgeSuccess', { number: this.number, symbol: 'LP' }),

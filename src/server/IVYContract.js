@@ -86,7 +86,7 @@ class IVYContract {
       use = Web3.utils.padLeft(use, 64)
       const data = funcSign + amount + lock + use
       this.sendEtherFrom({ data }).then(hash => {
-        resolve(this.getTransactionReceipt(hash))
+        resolve(hash)
       }).catch(e => {
         reject(e)
       })
@@ -108,7 +108,7 @@ class IVYContract {
       use = Web3.utils.padLeft(use, 64)
       const data = funcSign + depositId + amount + use
       this.sendEtherFrom({ data }).then(hash => {
-        resolve(this.getTransactionReceipt(hash))
+        resolve(hash)
       }).catch(e => {
         reject(e)
       })
@@ -125,8 +125,10 @@ class IVYContract {
       use = Web3.utils.padLeft(use, 64)
       const data = funcSign + use
       this.sendEtherFrom({ data }).then(hash => {
-        resolve(this.getTransactionReceipt(hash))
+        console.log('开始监听交易是否成功')
+        resolve(hash)
       }).catch(e => {
+        console.log('不监听交易，因为失败了')
         reject(e)
       })
     })
@@ -274,6 +276,7 @@ class IVYContract {
         }
         window.ethereum.sendAsync(payload, (error, response) => {
           if (error) {
+            console.log('发送交易失败', error)
             reject(error)
           }
           if (response.result) {
@@ -296,13 +299,10 @@ class IVYContract {
         queryTimes++
         // 查询交易是否完成，这⾥要通过这个⽅法去⼀直查询交易是否完成
         IVYContract.web3.eth.getTransactionReceipt(hash).then(res => {
-          if (res == null) {
-            resolve(res)
-          } else if (res.status) {
-            resolve(true)
-            clearInterval(timer)
-          } else {
-            resolve(false)
+          console.log('交易确认函数-------', res)
+          if (res) {
+            console.log('交易确认了-------', res.status)
+            resolve(res.status)
             clearInterval(timer)
           }
         })

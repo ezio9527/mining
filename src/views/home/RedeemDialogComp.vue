@@ -66,6 +66,9 @@ export default {
   },
   watch: {
     visible (val) {
+      if (val) {
+        this.qry()
+      }
       this.dialogVisible = val
     },
     dialogVisible (val) {
@@ -118,8 +121,8 @@ export default {
       this.ivyContract.redeem({
         amount: this.redeemList[this.checked],
         depositId: this.checked
-      }).then(result => {
-        result.then(() => {
+      }).then(hash => {
+        this.ivyContract.getTransactionReceipt(hash).then(() => {
           this.$notify({
             type: 'success',
             message: this.$t('common.redeemSuccess'),

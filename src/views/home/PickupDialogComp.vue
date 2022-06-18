@@ -59,8 +59,8 @@ export default {
         duration: 5000,
         forbidClick: true
       })
-      this.ivyContract.pickup().then(result => {
-        result.then(() => {
+      this.ivyContract.pickup().then(hash => {
+        this.ivyContract.getTransactionReceipt(hash).then(() => {
           this.$notify({
             type: 'success',
             message: this.$t('common.pickupSuccess'),
