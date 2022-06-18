@@ -54,6 +54,11 @@ export default {
     pickup () {
       this.$emit('update:visible', false)
       this.$emit('close')
+      this.$toast.loading({
+        message: this.$t('common.waiting'),
+        duration: 5000,
+        forbidClick: true
+      })
       this.ivyContract.pickup().then(result => {
         this.$notify({
           type: result ? 'success' : 'danger',
