@@ -5,7 +5,11 @@ module.exports = {
     waiting: '请等待交易确认',
     approveWaiting: '请等待授权确认',
     pledgeSuccess: '质押%{number}%{symbol}成功',
-    pledgeFailed: '质押失败'
+    pledgeFailed: '质押失败',
+    pickupSuccess: '提取成功',
+    pickupFailed: '提取失败',
+    redeemSuccess: '赎回成功',
+    redeemFailed: '赎回失败'
   },
   component: {
     pledge: '质押',

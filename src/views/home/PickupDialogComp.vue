@@ -54,7 +54,19 @@ export default {
     pickup () {
       this.$emit('update:visible', false)
       this.$emit('close')
-      this.ivyContract.pickup()
+      this.ivyContract.pickup().then(result => {
+        this.$notify({
+          type: result ? 'success' : 'danger',
+          message: result ? this.$t('common.pickupSuccess') : this.$t('common.pickupFailed'),
+          duration: 5000
+        })
+      }).catch(() => {
+        this.$notify({
+          type: 'danger',
+          message: this.$t('common.pickupFailed'),
+          duration: 5000
+        })
+      })
     }
   }
 }

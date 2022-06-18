@@ -4,8 +4,12 @@ module.exports = {
     contractCopyFailed: '合約地址複製失敗',
     waiting: '請等待交易確認',
     approveWaiting: '請等待授權確認',
-    pledgeSuccess: '質押成功',
-    pledgeFailed: '質押失敗'
+    pledgeSuccess: '質押%{number}%{symbol}成功',
+    pledgeFailed: '質押失敗',
+    pickupSuccess: '提取成功',
+    pickupFailed: '提取失败',
+    redeemSuccess: '贖回成功',
+    redeemFailed: '贖回失败'
   },
   component: {
     pledge: '質押',

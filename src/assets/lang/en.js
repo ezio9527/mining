@@ -4,8 +4,12 @@ module.exports = {
     contractCopyFailed: 'Failed to copy the contract address. Procedure',
     waiting: 'Please wait for confirmation of the transaction',
     approveWaiting: 'Please wait for authorization confirmation',
-    pledgeSuccess: 'The pledge success',
-    pledgeFailed: 'The pledge failure'
+    pledgeSuccess: 'The pledge %{number}%{symbol} success',
+    pledgeFailed: 'The pledge failure',
+    pickupSuccess: 'The pickup success',
+    pickupFailed: 'The pickup failure',
+    redeemSuccess: 'The redeem success',
+    redeemFailed: 'The redeem failure'
   },
   component: {
     pledge: 'pledge',

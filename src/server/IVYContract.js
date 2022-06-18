@@ -1,7 +1,6 @@
 import { IVY_ABI, IVY_ABI_STAKE, IVY_ABI_UNSTAKE, IVY_ABI_PROCESS_REWARDS } from '@/server/IVY_ABI'
 import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
-import { Toast } from 'vant'
 
 class IVYContract {
   static instanceofObj = null
@@ -99,20 +98,20 @@ class IVYContract {
    * @param address
    */
   redeem ({ address = IVYContract.walletAddress, amount = 0, depositId = 0, use = false }) {
-    console.log('赎回数量', amount.toString(), depositId, use)
-    const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_UNSTAKE)
-    depositId = Web3.utils.toHex(depositId.toString()).substring(2)
-    depositId = Web3.utils.padLeft(depositId, 64)
-    amount = Web3.utils.toHex(Web3.utils.toWei(amount.toString())).substring(2)
-    amount = Web3.utils.padLeft(amount, 64)
-    use = Web3.utils.toHex(Web3.utils.toWei('0')).substring(2)
-    use = Web3.utils.padLeft(use, 64)
-    const data = funcSign + depositId + amount + use
-    this.sendEtherFrom({ data }).then(res => {
-      console.log('赎回成功', res)
-    }).catch(e => {
-      Toast.fail(e.message)
-      console.log('赎回失败')
+    return new Promise((resolve, reject) => {
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_UNSTAKE)
+      depositId = Web3.utils.toHex(depositId.toString()).substring(2)
+      depositId = Web3.utils.padLeft(depositId, 64)
+      amount = Web3.utils.toHex(Web3.utils.toWei(amount.toString())).substring(2)
+      amount = Web3.utils.padLeft(amount, 64)
+      use = Web3.utils.toHex(Web3.utils.toWei('0')).substring(2)
+      use = Web3.utils.padLeft(use, 64)
+      const data = funcSign + depositId + amount + use
+      this.sendEtherFrom({ data }).then(hash => {
+        resolve(this.getTransactionReceipt(hash))
+      }).catch(e => {
+        reject(e)
+      })
     })
   }
 
@@ -120,15 +119,16 @@ class IVYContract {
    * 提取挖矿收益
    */
   pickup (use = false) {
-    const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_PROCESS_REWARDS)
-    use = Web3.utils.toHex(Web3.utils.toWei('0')).substring(2)
-    use = Web3.utils.padLeft(use, 64)
-    const data = funcSign + use
-    this.sendEtherFrom({ data }).then(res => {
-      console.log('提取成功', res)
-    }).catch(e => {
-      Toast.fail(e.message)
-      console.log('提取失败')
+    return new Promise((resolve, reject) => {
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_PROCESS_REWARDS)
+      use = Web3.utils.toHex(Web3.utils.toWei('0')).substring(2)
+      use = Web3.utils.padLeft(use, 64)
+      const data = funcSign + use
+      this.sendEtherFrom({ data }).then(hash => {
+        resolve(this.getTransactionReceipt(hash))
+      }).catch(e => {
+        reject(e)
+      })
     })
   }
 

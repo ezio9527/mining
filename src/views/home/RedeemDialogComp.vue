@@ -110,9 +110,26 @@ export default {
     redeem () {
       this.$emit('update:visible', false)
       this.$emit('close')
+      this.$toast.loading({
+        message: this.$t('common.waiting'),
+        duration: 5000,
+        forbidClick: true
+      })
       this.ivyContract.redeem({
         amount: this.redeemList[this.checked],
         depositId: this.checked
+      }).then(result => {
+        this.$notify({
+          type: result ? 'success' : 'danger',
+          message: result ? this.$t('common.redeemSuccess') : this.$t('common.redeemFailed'),
+          duration: 5000
+        })
+      }).catch(() => {
+        this.$notify({
+          type: 'danger',
+          message: this.$t('common.redeemFailed'),
+          duration: 5000
+        })
       })
     }
   }
