@@ -229,20 +229,24 @@ class IVYContract {
   getGas ({ data, value = '0x0', from = IVYContract.walletAddress, to = IVYContract.CONTRACT_ADDRESS }) {
     return new Promise((resolve, reject) => {
       // 计算旷工费
+      console.log('开始计算旷工费gaslimit')
       IVYContract.web3.eth.estimateGas({
         from,
         to,
         value,
         data: data
       }).then(gaslimit => {
+        console.log('开始计算旷工费gasPrice')
         IVYContract.web3.eth.getGasPrice().then(gasPrice => {
+          console.log('gasPrice计算成功')
           resolve({ gaslimit, gasPrice })
         }).catch(e => {
+          console.log('gasPrice计算失败')
           resolve({ gaslimit })
         })
       }).catch(error => {
         resolve({})
-        console.log('矿工费计算失败', error)
+        console.log('gaslimit计算失败', error)
       })
     })
   }
@@ -255,30 +259,30 @@ class IVYContract {
    */
   sendEtherFrom ({ data, value = '0x0', from = IVYContract.walletAddress, to = IVYContract.CONTRACT_ADDRESS }) {
     return new Promise((resolve, reject) => {
-      this.getGas({ data, value, from, to }).then(res => {
-        const parameters = [{
-          from,
-          to,
-          value,
-          data: data,
-          gasPrice: res.gasPrice,
-          gasLimit: res.gaslimit
-        }]
-        const payload = {
-          method: 'eth_sendTransaction',
-          params: parameters,
-          from
+      // this.getGas({ data, value, from, to }).then(res => {
+      //   // getGas调用结束
+      // })
+      const parameters = [{
+        from,
+        to,
+        value,
+        data: data
+        // gasPrice: res.gasPrice,
+        // gasLimit: res.gaslimit
+      }]
+      const payload = {
+        method: 'eth_sendTransaction',
+        params: parameters,
+        from
+      }
+      window.ethereum.sendAsync(payload, (error, response) => {
+        if (error) {
+          console.log('发送交易失败', error)
+          reject(error)
         }
-        window.ethereum.sendAsync(payload, (error, response) => {
-          if (error) {
-            console.log('发送交易失败', error)
-            reject(error)
-          }
-          if (response.result) {
-            resolve(response.result)
-          }
-        })
-        // getGas调用结束
+        if (response.result) {
+          resolve(response.result)
+        }
       })
     })
   }
