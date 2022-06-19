@@ -1,6 +1,7 @@
 import { IVY_ABI, IVY_ABI_STAKE, IVY_ABI_UNSTAKE, IVY_ABI_PROCESS_REWARDS } from '@/server/IVY_ABI'
 import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
+import config from '@data/config.json'
 
 class IVYContract {
   static instanceofObj = null
@@ -9,19 +10,13 @@ class IVYContract {
 
   static web3 = null
 
-  static WALLET_TYPE = 'bsc'
-
-  static BLOCKCHAIN_ID = 12
-
   // IVY代币地址
-  static TOKEN_ADDRESS = '0x6603e72C7C8AEAd2014D9FD97F55e4bE254009B1'
+  static TOKEN_ADDRESS = config.contract.IVY_Token.address
 
   // IVY质押挖矿合约地址
-  static CONTRACT_ADDRESS = '0x00CE333b9E5d4F5d09f63D0d109ff752CCF511e2'
+  static CONTRACT_ADDRESS = config.contract.IVY.address
 
-  static PROVIDER_LIST = [
-    'https://bsc-dataseed.binance.org/'
-  ]
+  static PROVIDER_LIST = config.wallet.rpcUrls
 
   /**
    * 获取实例对象

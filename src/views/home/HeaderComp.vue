@@ -31,6 +31,7 @@ import { useI18n } from 'vue-i18n'
 import IVYContract from '@/server/IVYContract'
 import ClipboardJS from 'clipboard'
 import tp from 'tp-js-sdk'
+import config from '@data/config.json'
 
 export default {
   name: 'HeaderComp',
@@ -57,25 +58,7 @@ export default {
       } else {
         window.ethereum.request({
           method: 'wallet_addEthereumChain', // Metamask的api名称
-          params: [{
-            chainId: '0x38', // 网络id，16进制的字符串
-            chainName: 'BNB Chain', // 添加到钱包后显示的网络名称
-            rpcUrls: [
-              'https://bsc-dataseed.binance.org/' // rpc地址
-            ],
-            // iconUrls: [
-            //   'https://testnet.hecoinfo.com/favicon.png' // 网络的图标，暂时没看到在哪里会显示
-            // ],
-            blockExplorerUrls: [
-              'https://bscscan.com/' // 网络对应的区块浏览器
-            ],
-            nativeCurrency: {
-              // 网络主币的信息
-              name: 'BNB',
-              symbol: 'BNB',
-              decimals: 18
-            }
-          }]
+          params: [config.wallet]
         })
       }
     },

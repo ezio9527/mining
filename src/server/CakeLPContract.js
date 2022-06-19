@@ -3,16 +3,13 @@ import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
 import Eth from 'web3-eth'
 import IVYContract from './IVYContract'
+import config from '@data/config.json'
 
 class CakeLPContract {
   static instanceofObj = null
 
-  static WALLET_TYPE = 'bsc'
-
-  static BLOCKCHAIN_ID = 12
-
   // 合约地址
-  static CONTRACT_ADDRESS = '0xB90b5a0246279244D5002FFD31a89Fe99C16D71a'
+  static CONTRACT_ADDRESS = config.contract.Cake_LP.address
 
   /**
    * 获取实例对象
