@@ -25,13 +25,6 @@
       "address": "0xB90b5a0246279244D5002FFD31a89Fe99C16D71a"
     }
   },
-  "blockchain": {
-    "blockchain_name": "BNB Chain",
-    "blockchain_type": "bsc",
-    "blockchain_id": "0x38",
-    "block_explorer_urls": "https://bscscan.com/",
-    "rpc_list": ["https://bsc-dataseed.binance.org/"]
-  },
   "wallet": {
     "chainId": "0x38",
     "chainName": "BNB Chain",
