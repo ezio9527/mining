@@ -885,9 +885,141 @@ const IVY_ABI_PROCESS_REWARDS = {
   type: 'function'
 }
 
+const IVY_ABI_BALANCE_OF =
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_user',
+        type: 'address'
+      }
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  }
+
+const GET_DEPOSITS_LENGTH = {
+  inputs: [
+    {
+      internalType: 'address',
+      name: '_user',
+      type: 'address'
+    }
+  ],
+  name: 'getDepositsLength',
+  outputs: [
+    {
+      internalType: 'uint256',
+      name: '',
+      type: 'uint256'
+    }
+  ],
+  stateMutability: 'view',
+  type: 'function'
+}
+
+const GET_DEPOSIT = {
+  inputs: [
+    {
+      internalType: 'address',
+      name: '_user',
+      type: 'address'
+    },
+    {
+      internalType: 'uint256',
+      name: '_depositId',
+      type: 'uint256'
+    }
+  ],
+  name: 'getDeposit',
+  outputs: [
+    {
+      components: [
+        {
+          internalType: 'uint256',
+          name: 'tokenAmount',
+          type: 'uint256'
+        },
+        {
+          internalType: 'uint256',
+          name: 'weight',
+          type: 'uint256'
+        },
+        {
+          internalType: 'uint64',
+          name: 'lockedFrom',
+          type: 'uint64'
+        },
+        {
+          internalType: 'uint64',
+          name: 'lockedUntil',
+          type: 'uint64'
+        },
+        {
+          internalType: 'bool',
+          name: 'isYield',
+          type: 'bool'
+        }
+      ],
+      internalType: 'struct IPool.Deposit',
+      name: '',
+      type: 'tuple'
+    }
+  ],
+  stateMutability: 'view',
+  type: 'function'
+}
+
+const POOL_TOKEN_RESERVE = {
+  inputs: [],
+  name: 'poolTokenReserve',
+  outputs: [
+    {
+      internalType: 'uint256',
+      name: '',
+      type: 'uint256'
+    }
+  ],
+  stateMutability: 'view',
+  type: 'function'
+}
+
+const PENDING_YIELD_REWARDS =
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_staker',
+        type: 'address'
+      }
+    ],
+    name: 'pendingYieldRewards',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  }
 export {
   IVY_ABI,
   IVY_ABI_STAKE,
   IVY_ABI_UNSTAKE,
-  IVY_ABI_PROCESS_REWARDS
+  IVY_ABI_PROCESS_REWARDS,
+  IVY_ABI_BALANCE_OF,
+  GET_DEPOSITS_LENGTH,
+  GET_DEPOSIT,
+  POOL_TOKEN_RESERVE,
+  PENDING_YIELD_REWARDS
 }

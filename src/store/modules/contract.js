@@ -77,7 +77,7 @@ const actions = {
     commit('setCakeLPContract', lpContract)
     const qry = () => {
       lpContract.getBalanceInfo().then(res => {
-        console.log('LP余额:', res)
+        // console.log('LP余额:', res)
         commit('setLpBalance', res)
       }).catch(e => {
         console.log(e)
@@ -89,7 +89,7 @@ const actions = {
         console.log(e)
       })
       ivyContract.getMiningNumber().then(res => {
-        console.log('个人挖矿量:', res)
+        // console.log('个人挖矿量:', res)
         commit('setMiningVol', res)
       }).catch(e => {
         console.log(e)
@@ -101,13 +101,13 @@ const actions = {
       //   console.log(e)
       // })
       ivyContract.getPledgeTotal().then(res => {
-        console.log('个人质押量:', res)
+        // console.log('个人质押量:', res)
         commit('setPledgeVol', res)
       }).catch(e => {
         console.log(e)
       })
       ivyContract.getPledgeAllTotal().then(res => {
-        console.log('全部质押量:', res)
+        // console.log('全部质押量:', res)
         commit('setPledgeTotal', res)
       }).catch(e => {
         console.log(e)

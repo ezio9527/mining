@@ -120,29 +120,11 @@ export default {
       })
     },
     redeem () {
-      this.$emit('update:visible', false)
-      this.$emit('close')
-      this.$toast.loading({
-        message: this.$t('common.waiting'),
-        duration: 5000,
-        forbidClick: true
-      })
-      this.ivyContract.redeem({
-        amount: this.inputList[this.checked],
-        depositId: this.checked
-      }).then(hash => {
-        this.ivyContract.getTransactionReceipt(hash).then(() => {
-          this.$notify({
-            type: 'success',
-            message: this.$t('common.redeemSuccess'),
-            duration: 5000
-          })
-        }).catch(() => {
-          this.$notify({
-            type: 'danger',
-            message: this.$t('common.redeemFailed'),
-            duration: 5000
-          })
+      this.ivyContract.getTransactionReceipt('0xb3a64d3607b5f713d5799d2289ef6b6b071e2591f5489d5f34631c21cdd73a86').then(() => {
+        this.$notify({
+          type: 'success',
+          message: this.$t('common.redeemSuccess'),
+          duration: 5000
         })
       }).catch(() => {
         this.$notify({
@@ -151,6 +133,37 @@ export default {
           duration: 5000
         })
       })
+      this.$emit('update:visible', false)
+      this.$emit('close')
+      // this.$toast.loading({
+      //   message: this.$t('common.waiting'),
+      //   duration: 5000,
+      //   forbidClick: true
+      // })
+      // this.ivyContract.redeem({
+      //   amount: this.inputList[this.checked],
+      //   depositId: this.checked
+      // }).then(hash => {
+      //   this.ivyContract.getTransactionReceipt(hash).then(() => {
+      //     this.$notify({
+      //       type: 'success',
+      //       message: this.$t('common.redeemSuccess'),
+      //       duration: 5000
+      //     })
+      //   }).catch(() => {
+      //     this.$notify({
+      //       type: 'danger',
+      //       message: this.$t('common.redeemFailed'),
+      //       duration: 5000
+      //     })
+      //   })
+      // }).catch(() => {
+      //   this.$notify({
+      //     type: 'danger',
+      //     message: this.$t('common.redeemFailed'),
+      //     duration: 5000
+      //   })
+      // })
     }
   }
 }

@@ -1,4 +1,4 @@
-import { IVY_ABI, IVY_ABI_STAKE, IVY_ABI_UNSTAKE, IVY_ABI_PROCESS_REWARDS } from '@/server/IVY_ABI'
+import { IVY_ABI, IVY_ABI_STAKE, IVY_ABI_UNSTAKE, IVY_ABI_PROCESS_REWARDS, IVY_ABI_BALANCE_OF, GET_DEPOSITS_LENGTH, GET_DEPOSIT, POOL_TOKEN_RESERVE, PENDING_YIELD_REWARDS } from '@/server/IVY_ABI'
 import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
 import config from '@data/config.json'
@@ -57,11 +57,22 @@ class IVYContract {
    */
   getBalanceInfo (address = IVYContract.walletAddress) {
     return new Promise((resolve, reject) => {
-      this.token.methods.balanceOf(address).call({
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_BALANCE_OF)
+      address = address.substring(2)
+      address = Web3.utils.padLeft(address, 64)
+      const data = funcSign + address
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          form: address,
+          QUANTITY: 'latest',
+          to: IVYContract.TOKEN_ADDRESS,
+          data
+        }]
       }).then(res => {
         resolve(Web3.utils.fromWei(res))
-      }).catch(err => {
-        reject(err)
+      }).catch(e => {
+        reject(e)
       })
     })
   }
@@ -134,11 +145,22 @@ class IVYContract {
    */
   getDepositLength (address = IVYContract.walletAddress) {
     return new Promise((resolve, reject) => {
-      this.contract.methods.getDepositsLength(address).call({
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(GET_DEPOSITS_LENGTH)
+      address = address.substring(2)
+      address = Web3.utils.padLeft(address, 64)
+      const data = funcSign + address
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          form: address,
+          QUANTITY: 'latest',
+          to: IVYContract.CONTRACT_ADDRESS,
+          data
+        }]
       }).then(res => {
-        resolve(res)
-      }).catch(err => {
-        reject(err)
+        resolve(Web3.utils.hexToNumber(res))
+      }).catch(e => {
+        reject(e)
       })
     })
   }
@@ -148,11 +170,45 @@ class IVYContract {
    */
   getDepositDetails ({ id, address = IVYContract.walletAddress }) {
     return new Promise((resolve, reject) => {
-      this.contract.methods.getDeposit(address, id).call({
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(GET_DEPOSIT)
+      address = address.substring(2)
+      address = Web3.utils.padLeft(address, 64)
+      id = Web3.utils.toHex(id.toString()).substring(2)
+      id = Web3.utils.padLeft(id, 64)
+      const data = funcSign + address + id
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          form: address,
+          QUANTITY: 'latest',
+          to: IVYContract.CONTRACT_ADDRESS,
+          data
+        }]
       }).then(res => {
-        resolve(res)
-      }).catch(err => {
-        reject(err)
+        const result = IVYContract.web3.eth.abi.decodeParameters([
+          {
+            name: 'tokenAmount',
+            type: 'uint256'
+          },
+          {
+            name: 'weight',
+            type: 'uint256'
+          },
+          {
+            name: 'lockedFrom',
+            type: 'uint64'
+          },
+          {
+            name: 'lockedUntil',
+            type: 'uint64'
+          },
+          {
+            name: 'isYield',
+            type: 'bool'
+          }], res)
+        resolve(result)
+      }).catch(e => {
+        reject(e)
       })
     })
   }
@@ -163,11 +219,22 @@ class IVYContract {
    */
   getPledgeTotal (address = IVYContract.walletAddress) {
     return new Promise((resolve, reject) => {
-      this.contract.methods.balanceOf(address).call({
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_BALANCE_OF)
+      address = address.substring(2)
+      address = Web3.utils.padLeft(address, 64)
+      const data = funcSign + address
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          form: address,
+          QUANTITY: 'latest',
+          to: IVYContract.CONTRACT_ADDRESS,
+          data
+        }]
       }).then(res => {
         resolve(Web3.utils.fromWei(res))
-      }).catch(err => {
-        reject(err)
+      }).catch(e => {
+        reject(e)
       })
     })
   }
@@ -178,11 +245,20 @@ class IVYContract {
    */
   getPledgeAllTotal (address = IVYContract.walletAddress) {
     return new Promise((resolve, reject) => {
-      this.contract.methods.poolTokenReserve().call({
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(POOL_TOKEN_RESERVE)
+      const data = funcSign
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          form: address,
+          QUANTITY: 'latest',
+          to: IVYContract.CONTRACT_ADDRESS,
+          data
+        }]
       }).then(res => {
         resolve(Web3.utils.fromWei(res))
-      }).catch(err => {
-        reject(err)
+      }).catch(e => {
+        reject(e)
       })
     })
   }
@@ -193,29 +269,22 @@ class IVYContract {
    */
   getMiningNumber (address = IVYContract.walletAddress) {
     return new Promise((resolve, reject) => {
-      this.contract.methods.pendingYieldRewards(address).call({
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(PENDING_YIELD_REWARDS)
+      address = address.substring(2)
+      address = Web3.utils.padLeft(address, 64)
+      const data = funcSign + address
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          form: address,
+          QUANTITY: 'latest',
+          to: IVYContract.CONTRACT_ADDRESS,
+          data
+        }]
       }).then(res => {
         resolve(Web3.utils.fromWei(res))
-      }).catch(err => {
-        reject(err)
-      })
-    })
-  }
-
-  /**
-   * 获取挖矿总量
-   * @param address
-   */
-  getMiningTotal (address = IVYContract.CONTRACT_ADDRESS) {
-    return new Promise((resolve, reject) => {
-      this.token.methods.balanceOf(address).call({
-      }).then(res => {
-        const total = Web3.utils.toBN(Web3.utils.toWei(IVYContract.TOKEN_TOTAL + ''))
-        // const balance = Web3.utils.toBN(res)
-        console.log('获取挖矿总量', total)
-        resolve(Web3.utils.fromWei(res))
-      }).catch(err => {
-        reject(err)
+      }).catch(e => {
+        reject(e)
       })
     })
   }
@@ -230,24 +299,46 @@ class IVYContract {
     return new Promise((resolve, reject) => {
       // 计算旷工费
       console.log('开始计算旷工费gaslimit')
-      IVYContract.web3.eth.estimateGas({
-        from,
-        to,
-        value,
-        data: data
+      window.ethereum.request({
+        method: 'eth_estimateGas',
+        params: [{
+          QUANTITY: 'latest',
+          to: IVYContract.CONTRACT_ADDRESS,
+          data
+        }]
       }).then(gaslimit => {
-        console.log('开始计算旷工费gasPrice')
-        IVYContract.web3.eth.getGasPrice().then(gasPrice => {
+        console.log('开始计算旷工费gasPrice', gaslimit)
+        window.ethereum.request({
+          method: 'eth_gasPrice'
+        }).then(gasPrice => {
           console.log('gasPrice计算成功')
           resolve({ gaslimit, gasPrice })
         }).catch(e => {
           console.log('gasPrice计算失败')
           resolve({ gaslimit })
         })
-      }).catch(error => {
+      }).catch(e => {
         resolve({})
-        console.log('gaslimit计算失败', error)
+        console.log('gaslimit计算失败', e)
       })
+      // IVYContract.web3.eth.estimateGas({
+      //   from,
+      //   to,
+      //   value,
+      //   data: data
+      // }).then(gaslimit => {
+      //   console.log('开始计算旷工费gasPrice')
+      //   IVYContract.web3.eth.getGasPrice().then(gasPrice => {
+      //     console.log('gasPrice计算成功')
+      //     resolve({ gaslimit, gasPrice })
+      //   }).catch(e => {
+      //     console.log('gasPrice计算失败')
+      //     resolve({ gaslimit })
+      //   })
+      // }).catch(error => {
+      //   resolve({})
+      //   console.log('gaslimit计算失败', error)
+      // })
     })
   }
 
@@ -296,14 +387,18 @@ class IVYContract {
       let queryTimes = 0
       const timer = setInterval(() => {
         queryTimes++
-        // 查询交易是否完成，这⾥要通过这个⽅法去⼀直查询交易是否完成
-        IVYContract.web3.eth.getTransactionReceipt(hash).then(res => {
+        window.ethereum.request({
+          method: 'eth_getTransactionReceipt',
+          params: [hash]
+        }).then(res => {
           console.log('交易确认函数-------', res)
           if (res) {
-            console.log('交易确认了-------', res.status)
-            resolve(res.status)
+            console.log('交易确认了-------', res.status === 1)
+            resolve(res.status === 1)
             clearInterval(timer)
           }
+        }).catch(e => {
+          console.log(e)
         })
         if (queryTimes > 10) {
           clearInterval(timer)

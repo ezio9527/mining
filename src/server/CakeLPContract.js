@@ -1,9 +1,10 @@
-import CAKE_LP_ABI from '@/server/CakeLP_ABI'
+import { CAKE_LP_ABI, CAKE_LP_ABI_APPROVE, CAKE_LP_ABI_ALLOWANCE } from '@/server/CakeLP_ABI'
 import Contract from 'web3-eth-contract'
 import Web3 from 'web3'
 import Eth from 'web3-eth'
 import IVYContract from './IVYContract'
 import config from '@data/config.json'
+import { IVY_ABI_BALANCE_OF } from '@/server/IVY_ABI'
 
 class CakeLPContract {
   static instanceofObj = null
@@ -41,11 +42,22 @@ class CakeLPContract {
    */
   getBalanceInfo (address = this.contract.options.from) {
     return new Promise((resolve, reject) => {
-      this.contract.methods.balanceOf(address).call({
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(IVY_ABI_BALANCE_OF)
+      address = address.substring(2)
+      address = Web3.utils.padLeft(address, 64)
+      const data = funcSign + address
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          form: address,
+          QUANTITY: 'latest',
+          to: CakeLPContract.CONTRACT_ADDRESS,
+          data
+        }]
       }).then(res => {
         resolve(Web3.utils.fromWei(res))
-      }).catch(err => {
-        reject(err)
+      }).catch(e => {
+        reject(e)
       })
     })
   }
@@ -56,9 +68,21 @@ class CakeLPContract {
    */
   approve (number) {
     return new Promise((resolve, reject) => {
-      this.contract.methods.approve(IVYContract.CONTRACT_ADDRESS, (number + '')).send({
-      }, () => {
-        resolve()
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(CAKE_LP_ABI_APPROVE)
+      number = Web3.utils.toHex(number.toString()).substring(2)
+      number = Web3.utils.padLeft(number, 64)
+      const data = funcSign + number
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          QUANTITY: 'latest',
+          to: IVYContract.CONTRACT_ADDRESS,
+          data
+        }]
+      }).then(res => {
+        resolve(Web3.utils.fromWei(res))
+      }).catch(e => {
+        reject(e)
       })
     })
   }
@@ -68,11 +92,23 @@ class CakeLPContract {
    */
   allowance (address = this.contract.options.from) {
     return new Promise((resolve, reject) => {
-      this.contract.methods.allowance(address, IVYContract.CONTRACT_ADDRESS).call({
+      const funcSign = IVYContract.web3.eth.abi.encodeFunctionSignature(CAKE_LP_ABI_ALLOWANCE)
+      address = address.substring(2)
+      address = Web3.utils.padLeft(address, 64)
+      let address2 = IVYContract.CONTRACT_ADDRESS.substring(2)
+      address2 = Web3.utils.padLeft(address, 64)
+      const data = funcSign + address + address2
+      window.ethereum.request({
+        method: 'eth_call',
+        params: [{
+          QUANTITY: 'latest',
+          to: IVYContract.CONTRACT_ADDRESS,
+          data
+        }]
       }).then(res => {
-        resolve(res)
-      }).catch(err => {
-        reject(err)
+        resolve(Web3.utils.fromWei(res))
+      }).catch(e => {
+        reject(e)
       })
     })
   }

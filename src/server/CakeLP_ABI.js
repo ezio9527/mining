@@ -564,4 +564,52 @@ const CAKE_LP_ABI = [{
   type: 'function'
 }]
 
-export default CAKE_LP_ABI
+const CAKE_LP_ABI_APPROVE = {
+  constant: false,
+  inputs: [{
+    internalType: 'address',
+    name: 'spender',
+    type: 'address'
+  }, {
+    internalType: 'uint256',
+    name: 'value',
+    type: 'uint256'
+  }],
+  name: 'approve',
+  outputs: [{
+    internalType: 'bool',
+    name: '',
+    type: 'bool'
+  }],
+  payable: false,
+  stateMutability: 'nonpayable',
+  type: 'function'
+}
+
+const CAKE_LP_ABI_ALLOWANCE = {
+  constant: true,
+  inputs: [{
+    internalType: 'address',
+    name: '',
+    type: 'address'
+  }, {
+    internalType: 'address',
+    name: '',
+    type: 'address'
+  }],
+  name: 'allowance',
+  outputs: [{
+    internalType: 'uint256',
+    name: '',
+    type: 'uint256'
+  }],
+  payable: false,
+  stateMutability: 'view',
+  type: 'function'
+}
+
+export {
+  CAKE_LP_ABI,
+  CAKE_LP_ABI_APPROVE,
+  CAKE_LP_ABI_ALLOWANCE
+}
