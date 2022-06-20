@@ -45,18 +45,16 @@ export default {
       pledgeTotal: 'contract/getPledgeTotal',
       pledgeStatus: 'transaction/getPledge',
       pickupStatus: 'transaction/getPickup',
-      redeemStatus: 'transaction/getRedeem'
+      redeemStatus: 'transaction/getRedeem',
+      notice: 'notice/getNotice'
     }),
     miningAllTotalFilter () {
-      if (this.miningAllTotal >= config.activity.totalYields) {
-        return config.activity.totalYields
-      } else {
-        return this.miningAllTotal.toFixed(4)
-      }
+      return this.miningAllTotal.toFixed(4)
     }
   },
   data () {
     return {
+      startTime: new Date(config.activity.startTime.year, config.activity.startTime.month - 1, config.activity.startTime.date, config.activity.startTime.hours, config.activity.startTime.minutes, config.activity.startTime.seconds, config.activity.startTime.ms),
       MINING_TOTAL: config.activity.totalYields, // 挖矿总量
       miningAllTotal: 0,
       pledgeDialog: false,
@@ -70,6 +68,10 @@ export default {
   },
   methods: {
     pledge () {
+      if ((this.startTime - this.$CalculateMining.getBeijingTime()) > 3600000) {
+        this.$toast(this.$t('common.lastTime'))
+        return
+      }
       if (this.pledgeStatus) {
         this.selected = ''
         this.$toast.loading({
@@ -113,13 +115,36 @@ export default {
       this.pledgeDialog = false
       this.pickupDialog = false
       this.redeemDialog = true
+    },
+    lastTime () {
+      let notice = ''
+      const lt = setInterval(() => {
+        if (this.$CalculateMining.getBeijingTime() <= this.startTime) {
+          const time = this.$CalculateMining.getContinuedTime(this.startTime)
+          if (time.day < 0 || time.hour < 0 || time.minute < 0 || time.second < 0) {
+            const day = (time.day < 0 ? time.day * -1 : time.day) + this.$t('common.day')
+            const hour = (time.hour < 0 ? time.hour * -1 : time.hour) + this.$t('common.hour')
+            const minute = (time.minute < 0 ? time.minute * -1 : time.minute) + this.$t('common.minute')
+            const second = (time.second < 0 ? time.second * -1 : time.second) + this.$t('common.second')
+            notice = day + hour + minute + second
+            notice = this.$t('common.startTime', { time: notice })
+            this.$store.commit('notice/setNotice', notice)
+          }
+        } else {
+          if (notice === this.notice) {
+            this.$store.commit('notice/setNotice', '')
+          }
+          clearInterval(lt)
+        }
+      }, 1000)
     }
   },
   created () {
+    this.lastTime()
     setInterval(() => {
       this.miningAllTotal = this.$CalculateMining.getYields({
         total: config.activity.totalYields,
-        startTime: new Date(config.activity.startTime.year, config.activity.startTime.month - 1, config.activity.startTime.date, config.activity.startTime.hours, config.activity.startTime.minutes, config.activity.startTime.seconds, config.activity.startTime.ms),
+        startTime: this.startTime,
         days: config.activity.days
       })
     }, 1000)

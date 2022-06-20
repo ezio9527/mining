@@ -80,6 +80,7 @@ export default {
     }
   },
   mounted () {
+    this.lang = localStorage.getItem('language')
     if (localStorage.getItem('enable')) {
       this.enable()
     }

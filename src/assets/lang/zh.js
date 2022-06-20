@@ -1,5 +1,11 @@
 module.exports = {
   common: {
+    startTime: '挖矿将于%{time}后开始,可提前一小时质押',
+    lastTime: '挖矿开始前一小时可以质押',
+    day: '天',
+    hour: '时',
+    minute: '分',
+    second: '秒',
     contractCopySuccess: '合约地址复制成功',
     contractCopyFailed: '合约地址复制失败',
     waiting: '请等待交易确认',

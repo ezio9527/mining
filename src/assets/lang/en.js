@@ -1,5 +1,11 @@
 module.exports = {
   common: {
+    startTime: 'Mining will begin %{time} later and can be pledged one hour in advance',
+    lastTime: 'You can pledge up to an hour before mining begins',
+    day: ' day ',
+    hour: ' hour ',
+    minute: ' minute ',
+    second: ' second ',
     contractCopySuccess: 'The contract address was successfully copied',
     contractCopyFailed: 'Failed to copy the contract address. Procedure',
     waiting: 'Please wait for confirmation of the transaction',
