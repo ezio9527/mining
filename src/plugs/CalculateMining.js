@@ -19,7 +19,8 @@ class CalculateMining {
     const DAY = 86400000
     const HOUR = 3600000
     const MINUTE = 60000
-    const offset = CalculateMining.getBeijingTime().getTime() - startTime.getTime()
+    let offset = CalculateMining.getBeijingTime().getTime() - startTime.getTime()
+    offset = offset < 0 ? 0 : offset
     const day = parseInt((offset / DAY).toString())
     const hour = parseInt(((offset % DAY) / HOUR).toString())
     const minute = parseInt(((offset % HOUR) / MINUTE).toString())
@@ -45,7 +46,8 @@ class CalculateMining {
     const hourAverage = dayAverage / 24
     const minuteAverage = hourAverage / 60
     const secondAverage = minuteAverage / 60
-    return dayAverage * ContinuedTime.day + hourAverage * ContinuedTime.hour + minuteAverage * ContinuedTime.minute + secondAverage * ContinuedTime.second
+    const result = dayAverage * ContinuedTime.day + hourAverage * ContinuedTime.hour + minuteAverage * ContinuedTime.minute + secondAverage * ContinuedTime.second
+    return result > total ? total : result
   }
 
   static install (app, options) {
