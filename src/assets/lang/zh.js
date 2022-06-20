@@ -9,7 +9,10 @@ module.exports = {
     pickupSuccess: '提取成功',
     pickupFailed: '提取失败',
     redeemSuccess: '赎回成功',
-    redeemFailed: '赎回失败'
+    redeemFailed: '赎回失败',
+    pledgeIng: '您有一笔质押交易待完成',
+    pickupIng: '您有一笔提取交易待完成',
+    redeemIng: '您有一笔赎回交易待完成'
   },
   component: {
     pledge: '质押',

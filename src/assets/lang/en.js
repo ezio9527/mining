@@ -9,7 +9,10 @@ module.exports = {
     pickupSuccess: 'The pickup success',
     pickupFailed: 'The pickup failure',
     redeemSuccess: 'The redeem success',
-    redeemFailed: 'The redeem failure'
+    redeemFailed: 'The redeem failure',
+    pledgeIng: 'You have a pledge transaction pending',
+    pickupIng: 'You have a pickup transaction pending',
+    redeemIng: 'You have a redeem transaction pending'
   },
   component: {
     pledge: 'pledge',

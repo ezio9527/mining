@@ -1,7 +1,6 @@
 <template>
   <button class="base-button"
-          :class="{'base-button_selected': selected}"
-          @click="selected = true">
+          :class="{'base-button_selected': selected}">
     <slot></slot>
   </button>
 </template>

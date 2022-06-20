@@ -42,7 +42,10 @@ export default {
       ivyContract: 'contract/getIVYContract',
       miningVol: 'contract/getMiningVol',
       pledgeVol: 'contract/getPledgeVol',
-      pledgeTotal: 'contract/getPledgeTotal'
+      pledgeTotal: 'contract/getPledgeTotal',
+      pledgeStatus: 'transaction/getPledge',
+      pickupStatus: 'transaction/getPickup',
+      redeemStatus: 'transaction/getRedeem'
     }),
     miningAllTotalFilter () {
       if (this.miningAllTotal >= config.activity.totalYields) {
@@ -67,18 +70,45 @@ export default {
   },
   methods: {
     pledge () {
+      if (this.pledgeStatus) {
+        this.selected = ''
+        this.$toast.loading({
+          message: this.$t('common.waiting'),
+          duration: 2000,
+          forbidClick: true
+        })
+        return
+      }
       this.selected = this.SELECTED_PLEDGE
       this.pledgeDialog = true
       this.pickupDialog = false
       this.redeemDialog = false
     },
     pickup () {
+      if (this.pickupStatus) {
+        this.selected = ''
+        this.$toast.loading({
+          message: this.$t('common.waiting'),
+          duration: 2000,
+          forbidClick: true
+        })
+        return
+      }
       this.selected = this.SELECTED_PICKUP
       this.pledgeDialog = false
       this.pickupDialog = true
       this.redeemDialog = false
     },
     redeem () {
+      if (this.redeemStatus) {
+        this.selected = ''
+        this.$toast.loading({
+          message: this.$t('common.waiting'),
+          duration: 2000,
+          forbidClick: true
+        })
+        return
+      }
       this.selected = this.SELECTED_REDEEM
       this.pledgeDialog = false
       this.pickupDialog = false

@@ -31,6 +31,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       dialogVisible: false,
       number: null
     }
@@ -74,6 +75,8 @@ export default {
       })
     },
     pledge () {
+      this.$store.commit('transaction/setPledge', true)
+      this.$store.commit('notice/setNotice', this.$t('common.pledgeIng'))
       this.$emit('update:visible', false)
       this.$emit('close')
       this.$toast.loading({
@@ -86,12 +89,16 @@ export default {
           amount: this.number
         }).then(hash => {
           this.ivyContract.getTransactionReceipt(hash).then(() => {
+            this.$store.commit('transaction/setPledge', false)
+            this.$store.commit('notice/setNotice', '')
             this.$notify({
               type: 'success',
               message: this.$t('common.pledgeSuccess', { number: this.number, symbol: 'LP' }),
               duration: 5000
             })
           }).catch(() => {
+            this.$store.commit('transaction/setPledge', false)
+            this.$store.commit('notice/setNotice', '')
             this.$notify({
               type: 'danger',
               message: this.$t('common.pledgeFailed'),
@@ -99,6 +106,8 @@ export default {
             })
           })
         }).catch(() => {
+          this.$store.commit('transaction/setPledge', false)
+          this.$store.commit('notice/setNotice', '')
           this.$notify({
             type: 'danger',
             message: this.$t('common.pledgeFailed'),

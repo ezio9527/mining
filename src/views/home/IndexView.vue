@@ -1,5 +1,6 @@
 <template>
   <div class="home-view">
+    <van-notice-bar mode="closeable" v-show="notice">{{ notice }}</van-notice-bar>
     <HeaderComp></HeaderComp>
     <MiningComp></MiningComp>
     <DescriptionComp></DescriptionComp>
@@ -10,6 +11,7 @@
 import HeaderComp from './HeaderComp'
 import MiningComp from './MiningComp'
 import DescriptionComp from './DescriptionComp'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'HomeView',
@@ -18,9 +20,10 @@ export default {
     MiningComp,
     DescriptionComp
   },
-  data () {
-    return {
-    }
+  computed: {
+    ...mapGetters({
+      notice: 'notice/getNotice'
+    })
   }
 }
 </script>

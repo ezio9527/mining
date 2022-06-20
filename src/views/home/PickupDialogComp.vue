@@ -2,11 +2,6 @@
   <BaseDialog class="pickup-dialog-comp" v-model:visible="dialogVisible">
     <template #default>
       <van-field v-model="miningVol" :label="$t('home.miningNumber')" disabled/>
-      <!--<van-field v-model="miningVol" type="number" :label="$t('home.pickupNumber')" :placeholder="$t('home.pickupNumberPlaceholder')">-->
-      <!--  <template #button>-->
-      <!--    <van-button plain size="mini" type="primary" color="#02B202" @click="number = balance">{{ $t('component.all') }}</van-button>-->
-      <!--  </template>-->
-      <!--</van-field>-->
       <div>
         <van-button @click="pickup" type="primary" color="#02B202" block>{{ $t('component.pickup') }}</van-button>
       </div>
@@ -52,6 +47,8 @@ export default {
   },
   methods: {
     pickup () {
+      this.$store.commit('transaction/setPickup', true)
+      this.$store.commit('notice/setNotice', this.$t('common.pickupIng'))
       this.$emit('update:visible', false)
       this.$emit('close')
       this.$toast.loading({
@@ -61,12 +58,16 @@ export default {
       })
       this.ivyContract.pickup().then(hash => {
         this.ivyContract.getTransactionReceipt(hash).then(() => {
+          this.$store.commit('transaction/setPickup', false)
+          this.$store.commit('notice/setNotice', '')
           this.$notify({
             type: 'success',
             message: this.$t('common.pickupSuccess'),
             duration: 5000
           })
         }).catch(() => {
+          this.$store.commit('transaction/setPickup', false)
+          this.$store.commit('notice/setNotice', '')
           this.$notify({
             type: 'danger',
             message: this.$t('common.pickupFailed'),
@@ -74,6 +75,8 @@ export default {
           })
         })
       }).catch(() => {
+        this.$store.commit('transaction/setPickup', false)
+        this.$store.commit('notice/setNotice', '')
         this.$notify({
           type: 'danger',
           message: this.$t('common.pickupFailed'),
