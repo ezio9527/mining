@@ -1,0 +1,11 @@
+{
+  "name": "IVY",
+  "website": "https://ivydefi.vip",
+  "description": "IVY, all transactions, mortgages and governance on the platform are transparent and on-chain. It is established on BSC, the largest decentralized application ecosystem, aiming to provide global users with a set of easy-to-use and highly transparent financial services.",
+  "explorer": "https://bscscan.com/token/0x388EE12bB527965C32D6B29C0E81285Dd026F1F8",
+  "type": "BEP20",
+  "symbol": "IVY",
+  "decimals": 18,
+  "status": "active",
+  "id": "0x388EE12bB527965C32D6B29C0E81285Dd026F1F8"
+}
