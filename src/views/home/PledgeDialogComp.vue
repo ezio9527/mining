@@ -62,7 +62,7 @@ export default {
       return new Promise(resolve => {
         // 查询授权
         this.cakeLPContract.allowance().then(number => {
-          if (number >= Web3.utils.toWei(this.number)) {
+          if (Web3.utils.fromWei(number) >= this.number) {
             resolve()
           } else {
             this.cakeLPContract.approve(Web3.utils.toWei(this.number) - number).then(() => {
