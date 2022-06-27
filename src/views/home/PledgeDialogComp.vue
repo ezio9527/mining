@@ -18,8 +18,10 @@
 import BaseDialog from '@/components/BaseDialog'
 import { mapGetters } from 'vuex'
 import Web3 from 'web3'
+import Notice from '@data/notice.json'
+
 export default {
-  name: 'RedeemDialogComp',
+  name: 'PledgeDialogComp',
   components: {
     BaseDialog
   },
@@ -43,7 +45,9 @@ export default {
       balance: 'contract/getLpBalance'
     }),
     disabled () {
-      return this.number === null || !Number(this.number) || this.number <= 0 || this.number > this.balance
+      const number = Number(this.number)
+      const balance = Number(this.balance)
+      return !number || number <= 0 || number > balance
     }
   },
   watch: {
@@ -58,14 +62,23 @@ export default {
     }
   },
   methods: {
-    approve () {
+    /**
+     * 需要授权的数量
+     * @param number
+     * @returns {Promise<unknown>}
+     */
+    approve (number) {
       return new Promise(resolve => {
         // 查询授权
-        this.cakeLPContract.allowance().then(number => {
-          if (number >= Web3.utils.toWei(this.number)) {
+        this.cakeLPContract.allowance().then(num => {
+          number = Web3.utils.toWei(number.toString())
+          number = Web3.utils.toBN(number.toString())
+          num = Web3.utils.toBN(num.toString())
+          if (num.gt(number)) {
             resolve()
           } else {
-            this.cakeLPContract.approve(Web3.utils.toWei(this.number) - number).then(() => {
+            // 避免精度导致的授权数量不足，影响后续交易失败，这里直接用交易数量请求授权
+            this.cakeLPContract.approve(this.number).then(() => {
               this.$toast.success(this.$t('common.approveWaiting'))
             }).finally(() => {
               resolve()
@@ -76,7 +89,7 @@ export default {
     },
     pledge () {
       this.$store.commit('transaction/setPledge', true)
-      this.$store.commit('notice/setNotice', this.$t('common.pledgeIng'))
+      this.$store.commit('notice/setNotice', { level: Notice.transaction.level, message: this.$t('common.pledgeIng') })
       this.$emit('update:visible', false)
       this.$emit('close')
       this.$toast.loading({
@@ -84,13 +97,13 @@ export default {
         duration: 5000,
         forbidClick: true
       })
-      this.approve().then(() => {
+      this.approve(this.number).then(() => {
         this.ivyContract.pledge({
           amount: this.number
         }).then(hash => {
           this.ivyContract.getTransactionReceipt(hash).then(() => {
             this.$store.commit('transaction/setPledge', false)
-            this.$store.commit('notice/setNotice', '')
+            this.$store.commit('notice/clearNotice', Notice.transaction.level)
             this.$notify({
               type: 'success',
               message: this.$t('common.pledgeSuccess', { number: this.number, symbol: 'LP' }),
@@ -98,7 +111,7 @@ export default {
             })
           }).catch(() => {
             this.$store.commit('transaction/setPledge', false)
-            this.$store.commit('notice/setNotice', '')
+            this.$store.commit('notice/clearNotice', Notice.transaction.level)
             this.$notify({
               type: 'danger',
               message: this.$t('common.pledgeFailed'),
@@ -107,7 +120,7 @@ export default {
           })
         }).catch(() => {
           this.$store.commit('transaction/setPledge', false)
-          this.$store.commit('notice/setNotice', '')
+          this.$store.commit('notice/clearNotice', Notice.transaction.level)
           this.$notify({
             type: 'danger',
             message: this.$t('common.pledgeFailed'),

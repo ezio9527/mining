@@ -1,6 +1,6 @@
 module.exports = {
   common: {
-    startTime: '挖矿将于%{time}后开始,可提前一小时质押',
+    startTime: '挖矿将于%{time}后开始',
     lastTime: '挖矿开始前一小时可以质押',
     day: '天',
     hour: '时',

@@ -1,5 +1,6 @@
 const state = () => ({
-  message: ''
+  message: '',
+  level: 0
 })
 
 // getters
@@ -11,8 +12,17 @@ const getters = {
 
 // mutations
 const mutations = {
-  setNotice (state, notice) {
-    state.message = notice
+  setNotice (state, { level, message }) {
+    if (Number(level) >= state.level) {
+      state.message = message
+      state.level = Number(level)
+    }
+  },
+  clearNotice (state, level) {
+    if (Number(level) >= state.level) {
+      state.message = ''
+      state.level = 0
+    }
   }
 }
 

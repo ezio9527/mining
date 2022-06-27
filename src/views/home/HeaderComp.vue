@@ -28,7 +28,6 @@
 <script>
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import IVYContract from '@/server/IVYContract'
 import ClipboardJS from 'clipboard'
 import tp from 'tp-js-sdk'
 import config from '@data/config.json'
@@ -39,7 +38,7 @@ export default {
     return {
       isTpApp: false,
       connection: false,
-      CONTRACT_ADDRESS: IVYContract.TOKEN_ADDRESS,
+      CONTRACT_ADDRESS: config.contract.IVY_Token.address,
       TOTAL: 10000 // 发行总量
     }
   },
@@ -64,7 +63,9 @@ export default {
     },
     // 获取授权
     enable () {
-      window.ethereum.enable().then((accounts) => {
+      window.ethereum.request({
+        method: 'eth_requestAccounts'
+      }).then((accounts) => {
         if (Number(window.ethereum.chainId) === 0x38) {
           this.connection = true
           const account = accounts[0]
@@ -85,7 +86,7 @@ export default {
       this.enable()
     }
     window.ethereum.autoRefreshOnNetworkChange = false
-    window.ethereum.on('networkChanged', chainId => {
+    window.ethereum.on('chainChanged', chainId => {
       this.enable()
     })
     const clipboard = new ClipboardJS('#header-comp-container_panel', {
