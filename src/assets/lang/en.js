@@ -1,6 +1,6 @@
 module.exports = {
   common: {
-    startTime: 'Mining will begin %{time} later and can be pledged one hour in advance',
+    startTime: 'Mining will begin %{time} later',
     lastTime: 'You can pledge up to an hour before mining begins',
     day: ' day ',
     hour: ' hour ',

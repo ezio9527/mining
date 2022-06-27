@@ -71,8 +71,8 @@ const mutations = {
 
 const actions = {
   initialize ({ commit, state }, account) {
-    const ivyContract = IVYContract.getInstanceof(account)
-    const lpContract = CakeLPContract.getInstanceof(account)
+    const ivyContract = new IVYContract(account)
+    const lpContract = new CakeLPContract(account)
     commit('setIVYContract', ivyContract)
     commit('setCakeLPContract', lpContract)
     const qry = () => {
@@ -83,7 +83,7 @@ const actions = {
         console.log(e)
       })
       ivyContract.getBalanceInfo().then(res => {
-        console.log('IVY余额:', res)
+        // console.log('IVY余额:', res)
         commit('setIvyBalance', res)
       }).catch(e => {
         console.log(e)
@@ -94,13 +94,7 @@ const actions = {
       }).catch(e => {
         console.log(e)
       })
-      // ivyContract.getMiningTotal().then(res => {
-      //   console.log('已挖矿量:', res)
-      //   commit('setMiningAllTotal', res)
-      // }).catch(e => {
-      //   console.log(e)
-      // })
-      ivyContract.getPledgeTotal().then(res => {
+      ivyContract.getBalanceInfo().then(res => {
         // console.log('个人质押量:', res)
         commit('setPledgeVol', res)
       }).catch(e => {

@@ -29,6 +29,7 @@ import PickupDialogComp from './PickupDialogComp'
 import RedeemDialogComp from './RedeemDialogComp'
 import { mapGetters } from 'vuex'
 import config from '@data/config.json'
+import Notice from '@data/notice.json'
 export default {
   name: 'MiningComp',
   components: {
@@ -68,10 +69,10 @@ export default {
   },
   methods: {
     pledge () {
-      if ((this.startTime - this.$CalculateMining.getBeijingTime()) > 3600000) {
-        this.$toast(this.$t('common.lastTime'))
-        return
-      }
+      // if ((this.startTime - this.$CalculateMining.getBeijingTime()) > 3600000) {
+      //   this.$toast(this.$t('common.lastTime'))
+      //   return
+      // }
       if (this.pledgeStatus) {
         this.selected = ''
         this.$toast.loading({
@@ -128,12 +129,10 @@ export default {
             const second = (time.second < 0 ? time.second * -1 : time.second) + this.$t('common.second')
             notice = day + hour + minute + second
             notice = this.$t('common.startTime', { time: notice })
-            this.$store.commit('notice/setNotice', notice)
+            this.$store.commit('notice/setNotice', { level: Notice.activity.level, message: notice })
           }
         } else {
-          if (notice === this.notice) {
-            this.$store.commit('notice/setNotice', '')
-          }
+          this.$store.commit('notice/clearNotice', Notice.activity.level)
           clearInterval(lt)
         }
       }, 1000)

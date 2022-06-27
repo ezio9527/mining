@@ -33,6 +33,7 @@
 import BaseDialog from '@/components/BaseDialog'
 import { mapGetters } from 'vuex'
 import Web3 from 'web3'
+import Notice from '@data/notice.json'
 
 export default {
   name: 'RedeemDialogComp',
@@ -121,7 +122,7 @@ export default {
     },
     redeem () {
       this.$store.commit('transaction/setRedeem', true)
-      this.$store.commit('notice/setNotice', this.$t('common.redeemIng'))
+      this.$store.commit('notice/setNotice', { level: Notice.transaction.level, message: this.$t('common.redeemIng') })
       this.$emit('update:visible', false)
       this.$emit('close')
       this.$toast.loading({
@@ -135,7 +136,7 @@ export default {
       }).then(hash => {
         this.ivyContract.getTransactionReceipt(hash).then(() => {
           this.$store.commit('transaction/setRedeem', false)
-          this.$store.commit('notice/setNotice', '')
+          this.$store.commit('notice/clearNotice', Notice.transaction.level)
           this.$notify({
             type: 'success',
             message: this.$t('common.redeemSuccess'),
@@ -143,7 +144,7 @@ export default {
           })
         }).catch(() => {
           this.$store.commit('transaction/setRedeem', false)
-          this.$store.commit('notice/setNotice', '')
+          this.$store.commit('notice/clearNotice', Notice.transaction.level)
           this.$notify({
             type: 'danger',
             message: this.$t('common.redeemFailed'),
@@ -152,7 +153,7 @@ export default {
         })
       }).catch(() => {
         this.$store.commit('transaction/setRedeem', false)
-        this.$store.commit('notice/setNotice', '')
+        this.$store.commit('notice/clearNotice', Notice.transaction.level)
         this.$notify({
           type: 'danger',
           message: this.$t('common.redeemFailed'),

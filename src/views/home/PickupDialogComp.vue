@@ -3,7 +3,7 @@
     <template #default>
       <van-field v-model="miningVol" :label="$t('home.miningNumber')" disabled/>
       <div>
-        <van-button @click="pickup" type="primary" color="#02B202" block>{{ $t('component.pickup') }}</van-button>
+        <van-button @click="pickup" :disabled="miningVol <= 0" type="primary" color="#02B202" block>{{ $t('component.pickup') }}</van-button>
       </div>
     </template>
   </BaseDialog>
@@ -12,6 +12,8 @@
 <script>
 import BaseDialog from '@/components/BaseDialog'
 import { mapGetters } from 'vuex'
+import Notice from '@data/notice.json'
+
 export default {
   name: 'PickupDialogComp',
   components: {
@@ -48,7 +50,7 @@ export default {
   methods: {
     pickup () {
       this.$store.commit('transaction/setPickup', true)
-      this.$store.commit('notice/setNotice', this.$t('common.pickupIng'))
+      this.$store.commit('notice/setNotice', { level: Notice.transaction.level, message: this.$t('common.pickupIng') })
       this.$emit('update:visible', false)
       this.$emit('close')
       this.$toast.loading({
@@ -59,7 +61,7 @@ export default {
       this.ivyContract.pickup().then(hash => {
         this.ivyContract.getTransactionReceipt(hash).then(() => {
           this.$store.commit('transaction/setPickup', false)
-          this.$store.commit('notice/setNotice', '')
+          this.$store.commit('notice/clearNotice', Notice.transaction.level)
           this.$notify({
             type: 'success',
             message: this.$t('common.pickupSuccess'),
@@ -67,7 +69,7 @@ export default {
           })
         }).catch(() => {
           this.$store.commit('transaction/setPickup', false)
-          this.$store.commit('notice/setNotice', '')
+          this.$store.commit('notice/clearNotice', Notice.transaction.level)
           this.$notify({
             type: 'danger',
             message: this.$t('common.pickupFailed'),
@@ -76,7 +78,7 @@ export default {
         })
       }).catch(() => {
         this.$store.commit('transaction/setPickup', false)
-        this.$store.commit('notice/setNotice', '')
+        this.$store.commit('notice/clearNotice', Notice.transaction.level)
         this.$notify({
           type: 'danger',
           message: this.$t('common.pickupFailed'),
