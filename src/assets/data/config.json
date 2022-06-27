@@ -4,7 +4,7 @@
     "startTime": {
       "year": 2022,
       "month": 6,
-      "date": 25,
+      "date": 30,
       "hours": 0,
       "minutes": 0,
       "seconds": 0,
@@ -16,13 +16,13 @@
   "contract": {
     "description": "合约相关的配置",
     "IVY": {
-      "address": ""
+      "address": "0x00CE333b9E5d4F5d09f63D0d109ff752CCF511e2"
     },
     "IVY_Token": {
-      "address": "0x388EE12bB527965C32D6B29C0E81285Dd026F1F8"
+      "address": "0x6603e72C7C8AEAd2014D9FD97F55e4bE254009B1"
     },
     "Cake_LP": {
-      "address": "0x8a723A8A9B030c56b518A70Fbaf959c430d5335f"
+      "address": "0xB90b5a0246279244D5002FFD31a89Fe99C16D71a"
     }
   },
   "wallet": {
